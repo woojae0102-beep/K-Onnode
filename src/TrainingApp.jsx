@@ -18,6 +18,7 @@ import {
   midiToKoSyllable,
   buildVocalPitchFeedback,
 } from './training/trainingPitch.js';
+import useWebRtcSession from './hooks/useWebRtcSession.js';
 
 const SESSIONS = 'sessions';
 const POSE_EDGES = [
@@ -138,7 +139,17 @@ function TrainingHub({ onStartLaptop, onJoinMobile, onBack }) {
 
 function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
   const canvasRef = useRef(null);
+  const remoteVideoRef = useRef(null);
   const [data, setData] = useState(null);
+  const [selectedTrack, setSelectedTrack] = useState('dance');
+  const { remoteStream, status: webrtcStatus, error: webrtcError } = useWebRtcSession({
+    db,
+    appId,
+    sessionId,
+    role: 'laptop',
+    localStream: null,
+    enabled: true,
+  });
   const joinUrl = useMemo(() => {
     const u = new URL(window.location.href);
     u.searchParams.set('session', sessionId);
@@ -176,6 +187,16 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
   const korean = data?.korean || {};
   const metrics = data?.metrics || {};
 
+  useEffect(() => {
+    if (track) setSelectedTrack(track);
+  }, [track]);
+
+  useEffect(() => {
+    const v = remoteVideoRef.current;
+    if (!v) return;
+    v.srcObject = remoteStream || null;
+  }, [remoteStream]);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -206,46 +227,85 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
             <p className="text-sm text-slate-400">모바일에서 탭을 바꾸면 여기에 반영됩니다.</p>
           </div>
         </div>
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
-            <h3 className="font-semibold text-cyan-300 mb-2">안무</h3>
-            <canvas ref={canvasRef} width={640} height={360} className="w-full rounded-xl bg-slate-950 border border-slate-800" />
-            <p className="text-sm text-slate-400 mt-2">
-              활동 점수: <span className="text-white font-mono">{metrics.danceActivity ?? '—'}</span>
-            </p>
-            <p className="text-xs text-slate-500">왼팔 각도(참고): {metrics.leftElbowDeg != null ? `${Math.round(metrics.leftElbowDeg)}°` : '—'}</p>
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-2">
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { id: 'dance', label: '안무' },
+              { id: 'vocal', label: '보컬' },
+              { id: 'korean', label: '한국어' },
+            ].map((x) => (
+              <button
+                key={x.id}
+                type="button"
+                onClick={() => setSelectedTrack(x.id)}
+                className={`rounded-xl py-2 text-sm font-medium transition ${
+                  selectedTrack === x.id ? 'bg-slate-700 text-white' : 'text-slate-400 hover:bg-slate-800'
+                }`}
+              >
+                {x.label}
+              </button>
+            ))}
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4 space-y-2">
-            <h3 className="font-semibold text-fuchsia-300">보컬</h3>
-            {pitch?.hz ? (
-              <>
-                <p className="text-2xl font-mono text-white">{pitch.hz.toFixed(1)} Hz</p>
-                <p className="text-sm">
-                  {pitch.noteName} · {pitch.koSyllable}
-                </p>
-                <p className="text-sm text-slate-300">{pitch.feedback}</p>
-                <p className="text-xs text-slate-500">정확도(목표 대비): {pitch.accuracy ?? '—'}%</p>
-              </>
-            ) : (
-              <p className="text-slate-500 text-sm">모바일 보컬 탭에서 마이크를 켜 주세요.</p>
-            )}
-          </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4 space-y-2">
-            <h3 className="font-semibold text-amber-300">한국어</h3>
-            {korean.accuracy != null ? (
-              <>
-                <p className="text-2xl font-mono text-white">{korean.accuracy}%</p>
-                <p className="text-xs text-slate-400">길이 {korean.lengthScore}% · 문자 일치 {korean.charMatch}%</p>
-                <ul className="text-sm text-slate-300 list-disc pl-4 space-y-1">
-                  {(korean.tips || []).map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-              </>
-            ) : (
-              <p className="text-slate-500 text-sm">모바일 한국어 탭에서 문장을 입력하고 분석하세요.</p>
-            )}
-          </div>
+        </div>
+        <div className="grid gap-6">
+          {selectedTrack === 'dance' && (
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+              <h3 className="font-semibold text-cyan-300 mb-3">안무 대시보드</h3>
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full rounded-xl bg-black border border-slate-800 object-contain max-h-[360px]"
+              />
+              <p className="text-xs text-slate-500 mt-2">
+                실시간 연결 상태: <span className="font-mono">{webrtcStatus}</span>
+                {webrtcError ? ` · 오류: ${webrtcError}` : ''}
+              </p>
+              <div className="mt-3">
+                <canvas ref={canvasRef} width={640} height={360} className="w-full rounded-xl bg-slate-950 border border-slate-800" />
+              </div>
+              <p className="text-sm text-slate-400 mt-2">
+                활동 점수: <span className="text-white font-mono">{metrics.danceActivity ?? '—'}</span>
+              </p>
+              <p className="text-xs text-slate-500">왼팔 각도(참고): {metrics.leftElbowDeg != null ? `${Math.round(metrics.leftElbowDeg)}°` : '—'}</p>
+            </div>
+          )}
+          {selectedTrack === 'vocal' && (
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4 space-y-2">
+              <h3 className="font-semibold text-fuchsia-300">보컬 대시보드</h3>
+              {pitch?.hz ? (
+                <>
+                  <p className="text-3xl font-mono text-white">{pitch.hz.toFixed(1)} Hz</p>
+                  <p className="text-base">
+                    {pitch.noteName} · {pitch.koSyllable}
+                  </p>
+                  <p className="text-sm text-slate-300">{pitch.feedback}</p>
+                  <p className="text-xs text-slate-500">정확도(목표 대비): {pitch.accuracy ?? '—'}%</p>
+                </>
+              ) : (
+                <p className="text-slate-500 text-sm">모바일 보컬 탭에서 마이크를 켜 주세요.</p>
+              )}
+            </div>
+          )}
+          {selectedTrack === 'korean' && (
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4 space-y-2">
+              <h3 className="font-semibold text-amber-300">한국어 대시보드</h3>
+              {korean.accuracy != null ? (
+                <>
+                  <p className="text-3xl font-mono text-white">{korean.accuracy}%</p>
+                  <p className="text-sm text-slate-400">길이 {korean.lengthScore}% · 문자 일치 {korean.charMatch}%</p>
+                  <ul className="text-sm text-slate-300 list-disc pl-4 space-y-1">
+                    {(korean.tips || []).map((t, i) => (
+                      <li key={i}>{t}</li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p className="text-slate-500 text-sm">모바일 한국어 탭에서 문장을 입력하고 분석하세요.</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -255,6 +315,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
 function TrainingMobile({ db, appId, sessionId, onBack }) {
   const [tab, setTab] = useState('dance');
   const [camOn, setCamOn] = useState(false);
+  const [camStream, setCamStream] = useState(null);
   const [micOn, setMicOn] = useState(false);
   const [koInput, setKoInput] = useState('');
   const [vocalTarget, setVocalTarget] = useState(60);
@@ -271,6 +332,14 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
     () => doc(db, 'artifacts', appId, 'public', 'data', SESSIONS, sessionId),
     [db, appId, sessionId]
   );
+  const { status: webrtcStatus, error: webrtcError } = useWebRtcSession({
+    db,
+    appId,
+    sessionId,
+    role: 'mobile',
+    localStream: camStream,
+    enabled: camOn && tab === 'dance' && Boolean(camStream),
+  });
 
   const syncTrack = useCallback(
     async (t) => {
@@ -310,6 +379,7 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
           return;
         }
         video.srcObject = stream;
+        setCamStream(stream);
         await video.play();
 
         const wasmPath = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.34/wasm';
@@ -398,6 +468,7 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
         v.srcObject.getTracks().forEach((t) => t.stop());
         v.srcObject = null;
       }
+      setCamStream(null);
       landmarkerRef.current?.close?.();
       landmarkerRef.current = null;
       updateDoc(sessionRef, {
@@ -553,9 +624,12 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
               onClick={() => setCamOn((c) => !c)}
               className={`w-full py-3 rounded-xl font-semibold ${camOn ? 'bg-rose-600' : 'bg-sky-600'}`}
             >
-              {camOn ? '카메라 끄기' : '카메라 켜기 (포즈 전송)'}
+              {camOn ? '카메라 끄기' : '카메라 켜기 (포즈 + 미러링 전송)'}
             </button>
-            <p className="text-xs text-slate-500">MediaPipe Holistic으로 포즈를 추정해 노트북에 전송합니다.</p>
+            <p className="text-xs text-slate-500">
+              MediaPipe 포즈 + WebRTC 영상 전송 상태: <span className="font-mono">{webrtcStatus}</span>
+              {webrtcError ? ` · 오류: ${webrtcError}` : ''}
+            </p>
           </div>
         )}
         {tab === 'vocal' && (

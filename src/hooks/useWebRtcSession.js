@@ -16,10 +16,37 @@ import {
   deleteField,
 } from 'firebase/firestore';
 
-const ICE_SERVERS = [
+const DEFAULT_ICE_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
 ];
+
+function parseCsv(value) {
+  return String(value || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function buildIceServers() {
+  const servers = [...DEFAULT_ICE_SERVERS];
+  try {
+    const turnUrls = parseCsv(import.meta.env.VITE_WEBRTC_TURN_URLS);
+    const turnUsername = String(import.meta.env.VITE_WEBRTC_TURN_USERNAME || '').trim();
+    const turnCredential = String(import.meta.env.VITE_WEBRTC_TURN_CREDENTIAL || '').trim();
+
+    if (turnUrls.length && turnUsername && turnCredential) {
+      servers.push({
+        urls: turnUrls.length === 1 ? turnUrls[0] : turnUrls,
+        username: turnUsername,
+        credential: turnCredential,
+      });
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return servers;
+}
 
 function webrtcSignalingDocRef(db, appId, sessionKey) {
   return doc(db, 'artifacts', appId, 'public', 'data', 'sessions', sessionKey, 'webrtc', 'signaling');
@@ -83,7 +110,7 @@ function useWebRtcSession({ db, appId, sessionId, role, localStream, enabled }) 
     }
 
     let cancelled = false;
-    const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    const pc = new RTCPeerConnection({ iceServers: buildIceServers() });
     const unsubscribersRef = { current: [] };
     const processedIceIds = new Set();
     const pendingIce = [];
