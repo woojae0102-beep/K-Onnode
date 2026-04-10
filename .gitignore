@@ -1,5 +1,8 @@
 node_modules
 dist
+# 수정됨 — 시크릿·로컬 환경 (Netlify secret scan 대비)
 .env
+.env.*
+!.env.example
 .env.local
 *.log

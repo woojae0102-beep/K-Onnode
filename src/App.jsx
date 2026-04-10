@@ -57,15 +57,49 @@ const resolveFirebaseConfig = () => {
 };
 
 const firebaseConfig = resolveFirebaseConfig();
-if (!firebaseConfig) {
-  throw new Error('Firebase 설정을 찾을 수 없습니다. .env 또는 __firebase_config를 확인하세요.');
-}
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'onnode-integrated-v15';
 
-export default function App() {
+let firebaseApp = null;
+let auth = null;
+let db = null;
+if (firebaseConfig) {
+  firebaseApp = initializeApp(firebaseConfig);
+  auth = getAuth(firebaseApp);
+  db = getFirestore(firebaseApp);
+}
+
+// 수정됨 — Netlify 등: __app_id 없으면 VITE_APP_ID 또는 기본값
+const appId =
+  typeof __app_id !== 'undefined' && __app_id
+    ? __app_id
+    : import.meta.env.VITE_APP_ID
+      ? String(import.meta.env.VITE_APP_ID).trim()
+      : 'onnode-integrated-v15';
+
+function FirebaseMissingScreen() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-8 font-sans">
+      <h1 className="text-2xl font-black text-fuchsia-400 mb-4">Firebase 설정이 필요합니다</h1>
+      <p className="text-sm text-slate-400 text-center max-w-lg mb-6 break-keep leading-relaxed">
+        Netlify(또는 배포 환경)에 <code className="text-fuchsia-300">VITE_FIREBASE_API_KEY</code> 등{' '}
+        <code className="text-fuchsia-300">VITE_</code> 로 시작하는 환경 변수를 추가한 뒤{' '}
+        <strong>재배포(Clear cache and deploy)</strong> 하세요. 로컬의 <code className="text-slate-500">.env</code>는 Git에
+        올라가지 않아 배포 빌드에는 포함되지 않습니다.
+      </p>
+      <ul className="text-xs text-slate-500 text-left space-y-1 font-mono max-w-md">
+        <li>VITE_FIREBASE_API_KEY</li>
+        <li>VITE_FIREBASE_AUTH_DOMAIN</li>
+        <li>VITE_FIREBASE_PROJECT_ID</li>
+        <li>VITE_FIREBASE_STORAGE_BUCKET</li>
+        <li>VITE_FIREBASE_MESSAGING_SENDER_ID</li>
+        <li>VITE_FIREBASE_APP_ID</li>
+        <li>VITE_FIREBASE_MEASUREMENT_ID (선택)</li>
+      </ul>
+    </div>
+  );
+}
+
+// 수정됨 — Firebase 미설정 시 흰 화면 대신 안내 (Hooks 규칙: 래퍼에서 분기)
+function MainApp() {
   const [user, setUser] = useState(null);
   const [viewMode, setViewMode] = useState('hub');
   const [sessionId, setSessionId] = useState('');
@@ -279,6 +313,13 @@ export default function App() {
       )}
     </div>
   );
+}
+
+export default function App() {
+  if (!firebaseConfig || !auth || !db) {
+    return <FirebaseMissingScreen />;
+  }
+  return <MainApp />;
 }
 
 function SpatialSimulator({ theme, isAnalyzing }) {
