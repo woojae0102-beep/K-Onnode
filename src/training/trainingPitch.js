@@ -91,7 +91,7 @@ export function buildVocalPitchFeedback(hz, targetMidi) {
     if (centsRaw > 25) feedback = '조금 높습니다.';
     else if (centsRaw < -25) feedback = '조금 낮습니다.';
     else if (Math.abs(centsRaw) > 10) feedback = '미세하게 조정해 보세요.';
-    return { cents: centsRaw, feedback, accuracy };
+    return { cents, centsRaw, feedback, accuracy };
   } catch (e) {
     console.error(e);
     return { cents: 0, feedback: '분석 오류', accuracy: 0 };
