@@ -195,6 +195,16 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
     const v = remoteVideoRef.current;
     if (!v) return;
     v.srcObject = remoteStream || null;
+    if (remoteStream) {
+      const tryPlay = () => {
+        v.play().catch(() => {});
+      };
+      v.onloadedmetadata = tryPlay;
+      tryPlay();
+      return () => {
+        v.onloadedmetadata = null;
+      };
+    }
   }, [remoteStream]);
 
   return (
@@ -256,12 +266,17 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
                 autoPlay
                 playsInline
                 muted
-                className="w-full rounded-xl bg-black border border-slate-800 object-contain max-h-[360px]"
+                className="w-full rounded-xl bg-black border border-slate-800 object-contain max-h-[360px] scale-x-[-1]"
               />
               <p className="text-xs text-slate-500 mt-2">
                 실시간 연결 상태: <span className="font-mono">{webrtcStatus}</span>
                 {webrtcError ? ` · 오류: ${webrtcError}` : ''}
               </p>
+              {!remoteStream && (
+                <p className="text-xs text-amber-400 mt-1">
+                  모바일 안무 탭에서 카메라를 켜고 권한을 허용하면 실제 영상이 여기에 표시됩니다.
+                </p>
+              )}
               <div className="mt-3">
                 <canvas ref={canvasRef} width={640} height={360} className="w-full rounded-xl bg-slate-950 border border-slate-800" />
               </div>
@@ -320,6 +335,7 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
   const [koInput, setKoInput] = useState('');
   const [vocalTarget, setVocalTarget] = useState(60);
   const videoRef = useRef(null);
+  const mobileOverlayRef = useRef(null);
   const landmarkerRef = useRef(null);
   const rafRef = useRef(null);
   const lastPoseWrite = useRef(0);
@@ -418,6 +434,18 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
           const r = landmarkerRef.current.detectForVideo(video, performance.now());
           const pl = r.poseLandmarks?.[0];
           const now = performance.now();
+          const overlay = mobileOverlayRef.current;
+          if (overlay && video.videoWidth && video.videoHeight) {
+            if (overlay.width !== video.videoWidth || overlay.height !== video.videoHeight) {
+              overlay.width = video.videoWidth;
+              overlay.height = video.videoHeight;
+            }
+            const octx = overlay.getContext('2d');
+            if (octx) {
+              if (pl?.length) drawPoseOnCanvas(octx, pl, overlay.width, overlay.height);
+              else octx.clearRect(0, 0, overlay.width, overlay.height);
+            }
+          }
           if (pl?.length && now - lastPoseWrite.current > 120) {
             lastPoseWrite.current = now;
             const compact = pl.map((p) => ({
@@ -467,6 +495,11 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
       if (v?.srcObject) {
         v.srcObject.getTracks().forEach((t) => t.stop());
         v.srcObject = null;
+      }
+      const overlay = mobileOverlayRef.current;
+      if (overlay) {
+        const octx = overlay.getContext('2d');
+        if (octx) octx.clearRect(0, 0, overlay.width, overlay.height);
       }
       setCamStream(null);
       landmarkerRef.current?.close?.();
@@ -618,7 +651,18 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
       <div className="flex-1 p-4 overflow-auto">
         {tab === 'dance' && (
           <div className="space-y-4">
-            <video ref={videoRef} playsInline muted className="w-full max-w-md rounded-xl bg-black mx-auto block" />
+            <div className="relative w-full max-w-md mx-auto">
+              <video
+                ref={videoRef}
+                playsInline
+                muted
+                className="w-full rounded-xl bg-black block scale-x-[-1]"
+              />
+              <canvas
+                ref={mobileOverlayRef}
+                className="absolute inset-0 w-full h-full rounded-xl pointer-events-none scale-x-[-1]"
+              />
+            </div>
             <button
               type="button"
               onClick={() => setCamOn((c) => !c)}
