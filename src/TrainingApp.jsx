@@ -514,7 +514,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
                 />
                 <canvas
                   ref={danceCanvasRef}
-                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent transform-gpu [will-change:transform] object-fill scale-x-[-1]"
+                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent transform-gpu [will-change:transform] object-contain scale-x-[-1]"
                 />
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-xs">
