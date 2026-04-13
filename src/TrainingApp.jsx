@@ -38,6 +38,10 @@ const POSE_EDGES = [
 
 const SAMPLE_KO =
   '안녕하세요, 오늘도 열심히 연습해 볼게요. 발음을 또렷하게 하면서 천천히 읽어 주세요.';
+const MOBILE_FRAME_WIDTH = 480;
+const MOBILE_FRAME_HEIGHT = 360;
+const MOBILE_FRAME_JPEG_QUALITY = 0.5;
+const MOBILE_FRAME_INTERVAL_MS = 1000 / 30;
 
 function angleDeg(ax, ay, bx, by, cx, cy) {
   const v1x = ax - bx;
@@ -160,6 +164,9 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
   const latestPoseRef = useRef(null);
   const latestFrameUrlRef = useRef('');
   const latestFrameImageRef = useRef(null);
+  const pendingFrameUrlRef = useRef('');
+  const isFrameLoadingRef = useRef(false);
+  const loadedFrameUrlRef = useRef('');
   const danceRenderRafRef = useRef(null);
   const [data, setData] = useState(null);
   const [selectedTrack, setSelectedTrack] = useState('dance');
@@ -191,7 +198,28 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
   }, [data?.pose?.landmarks]);
 
   useEffect(() => {
-    latestFrameUrlRef.current = data?.mobileFrame?.dataUrl || '';
+    const nextUrl = data?.mobileFrame?.dataUrl || '';
+    latestFrameUrlRef.current = nextUrl;
+    pendingFrameUrlRef.current = nextUrl;
+    if (!nextUrl) return;
+    if (!latestFrameImageRef.current) latestFrameImageRef.current = new Image();
+    const img = latestFrameImageRef.current;
+    const loadLatest = () => {
+      if (isFrameLoadingRef.current) return;
+      const targetUrl = pendingFrameUrlRef.current;
+      if (!targetUrl || targetUrl === loadedFrameUrlRef.current || img.src === targetUrl) return;
+      isFrameLoadingRef.current = true;
+      img.onload = () => {
+        loadedFrameUrlRef.current = targetUrl;
+        isFrameLoadingRef.current = false;
+        if (pendingFrameUrlRef.current !== targetUrl) loadLatest();
+      };
+      img.onerror = () => {
+        isFrameLoadingRef.current = false;
+      };
+      img.src = targetUrl;
+    };
+    loadLatest();
   }, [data?.mobileFrame?.dataUrl]);
 
   const track = data?.track || 'dance';
@@ -246,30 +274,19 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         drewBackground = true;
       } else {
-        // 원인2 대응: WebRTC 영상이 비었을 때 mobileFrame(base64 dataUrl)로 폴백 렌더합니다.
-        const frameUrl = latestFrameUrlRef.current;
-        if (frameUrl) {
-          if (!latestFrameImageRef.current || latestFrameImageRef.current.src !== frameUrl) {
-            const img = new Image();
-            img.src = frameUrl;
-            latestFrameImageRef.current = img;
+        // 최신 프레임만 유지되는 재사용 Image 폴백 렌더링입니다.
+        const img = latestFrameImageRef.current;
+        if (img?.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+          if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
           }
-          const img = latestFrameImageRef.current;
-          if (img?.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-            if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
-              canvas.width = img.naturalWidth;
-              canvas.height = img.naturalHeight;
-            }
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            drewBackground = true;
-          }
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          drewBackground = true;
         }
       }
-      if (!drewBackground) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
       const lm = latestPoseRef.current;
-      if (lm?.length) {
+      if (drewBackground && lm?.length) {
         // 원인3 대응: canvas 실치수 기준으로 skeleton을 같은 프레임 위에 오버레이합니다.
         drawPoseOnCanvas(ctx, lm, canvas.width, canvas.height, false);
       }
@@ -348,7 +365,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
                 />
                 <canvas
                   ref={danceCanvasRef}
-                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent scale-x-[-1]"
+                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent transform-gpu [will-change:transform] scale-x-[-1]"
                 />
                 {!remoteStream && (
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/70 text-sm text-slate-300">
@@ -536,12 +553,12 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
           const r = landmarkerRef.current.detectForVideo(video, performance.now());
           const pl = r.poseLandmarks?.[0];
           const now = performance.now();
-          if (video.videoWidth && now - lastFrameWrite.current > 320) {
+          if (video.videoWidth && now - lastFrameWrite.current > MOBILE_FRAME_INTERVAL_MS) {
             lastFrameWrite.current = now;
             const c = mirrorCanvasRef.current || document.createElement('canvas');
             mirrorCanvasRef.current = c;
-            c.width = 320;
-            c.height = 180;
+            c.width = MOBILE_FRAME_WIDTH;
+            c.height = MOBILE_FRAME_HEIGHT;
             const cctx = c.getContext('2d');
             if (cctx) {
               // 모바일 미리보기와 동일하게 좌우 반전된 화면을 저장합니다.
@@ -549,7 +566,7 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
               cctx.scale(-1, 1);
               cctx.drawImage(video, -c.width, 0, c.width, c.height);
               cctx.restore();
-              const dataUrl = c.toDataURL('image/jpeg', 0.62);
+              const dataUrl = c.toDataURL('image/jpeg', MOBILE_FRAME_JPEG_QUALITY);
               updateDoc(sessionRef, {
                 mobileFrame: { dataUrl, ts: Date.now() },
                 updatedAt: serverTimestamp(),
