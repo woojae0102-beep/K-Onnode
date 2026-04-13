@@ -80,18 +80,6 @@ function drawPoseOnCanvas(ctx, landmarks, w, h, clearFirst = true) {
   }
 }
 
-function rotateLandmarksClockwise(landmarks) {
-  if (!Array.isArray(landmarks)) return landmarks;
-  return landmarks.map((p) => {
-    if (!p) return p;
-    return {
-      ...p,
-      x: 1 - p.y,
-      y: p.x,
-    };
-  });
-}
-
 function analyzeKorean(reference, userInput) {
   const ref = (reference || '').trim();
   const user = (userInput || '').trim();
@@ -281,16 +269,14 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
     const renderFrame = () => {
       if (cancelled) return;
       let drewBackground = false;
-      let rotatedFrame = false;
       let logicalDrawW = canvas.width / Math.max(1, window.devicePixelRatio || 1);
       let logicalDrawH = canvas.height / Math.max(1, window.devicePixelRatio || 1);
       const vw = video.videoWidth || 0;
       const vh = video.videoHeight || 0;
       // 원인1 대응: 비디오 프레임 데이터가 준비된 경우에만 drawImage를 호출합니다.
       if (video.readyState >= 2 && vw > 0 && vh > 0) {
-        const isPortrait = vh > vw;
-        const logicalW = isPortrait ? vh : vw;
-        const logicalH = isPortrait ? vw : vh;
+        const logicalW = vw;
+        const logicalH = vh;
         const dpr = Math.max(1, window.devicePixelRatio || 1);
         const pixelW = Math.round(logicalW * dpr);
         const pixelH = Math.round(logicalH * dpr);
@@ -301,16 +287,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-        if (isPortrait) {
-          ctx.save();
-          ctx.translate(logicalW / 2, logicalH / 2);
-          ctx.rotate(Math.PI / 2);
-          ctx.drawImage(video, -vw / 2, -vh / 2, vw, vh);
-          ctx.restore();
-          rotatedFrame = true;
-        } else {
-          ctx.drawImage(video, 0, 0, logicalW, logicalH);
-        }
+        ctx.drawImage(video, 0, 0, logicalW, logicalH);
         logicalDrawW = logicalW;
         logicalDrawH = logicalH;
         drewBackground = true;
@@ -320,9 +297,8 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
         if (img?.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
           const iw = img.naturalWidth;
           const ih = img.naturalHeight;
-          const isPortrait = ih > iw;
-          const logicalW = isPortrait ? ih : iw;
-          const logicalH = isPortrait ? iw : ih;
+          const logicalW = iw;
+          const logicalH = ih;
           const dpr = Math.max(1, window.devicePixelRatio || 1);
           const pixelW = Math.round(logicalW * dpr);
           const pixelH = Math.round(logicalH * dpr);
@@ -333,16 +309,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
-          if (isPortrait) {
-            ctx.save();
-            ctx.translate(logicalW / 2, logicalH / 2);
-            ctx.rotate(Math.PI / 2);
-            ctx.drawImage(img, -iw / 2, -ih / 2, iw, ih);
-            ctx.restore();
-            rotatedFrame = true;
-          } else {
-            ctx.drawImage(img, 0, 0, logicalW, logicalH);
-          }
+          ctx.drawImage(img, 0, 0, logicalW, logicalH);
           logicalDrawW = logicalW;
           logicalDrawH = logicalH;
           drewBackground = true;
@@ -350,9 +317,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
       }
       const lm = latestPoseRef.current;
       if (drewBackground && lm?.length) {
-        // 원인3 대응: canvas 실치수 기준으로 skeleton을 같은 프레임 위에 오버레이합니다.
-        const poseToDraw = rotatedFrame ? rotateLandmarksClockwise(lm) : lm;
-        drawPoseOnCanvas(ctx, poseToDraw, logicalDrawW, logicalDrawH, false);
+        drawPoseOnCanvas(ctx, lm, logicalDrawW, logicalDrawH, false);
       }
       danceRenderRafRef.current = requestAnimationFrame(renderFrame);
     };
@@ -366,8 +331,8 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
   }, [remoteStream]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
+      <div className="w-full max-w-none mx-auto space-y-6 px-0">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold">트레이닝 대시보드</h2>
@@ -419,7 +384,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
           {selectedTrack === 'dance' && (
             <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
               <h3 className="font-semibold text-cyan-300 mb-3">안무 대시보드</h3>
-              <div className="relative w-full h-[72vh] min-h-[420px] rounded-xl overflow-hidden border border-slate-800 bg-black">
+              <div className="relative w-full h-[80vh] min-h-[480px] flex items-center justify-center rounded-xl overflow-hidden border border-slate-800 bg-black">
                 <video
                   ref={remoteVideoRef}
                   autoPlay
@@ -429,7 +394,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
                 />
                 <canvas
                   ref={danceCanvasRef}
-                  className="absolute left-0 top-0 z-10 w-full h-auto pointer-events-none bg-transparent transform-gpu [will-change:transform] [aspect-ratio:auto] object-contain scale-x-[-1]"
+                  className="absolute left-0 top-0 z-10 w-full h-auto max-h-[80vh] pointer-events-none bg-transparent transform-gpu [will-change:transform] object-contain scale-x-[-1]"
                 />
                 {!remoteStream && (
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/70 text-sm text-slate-300">
