@@ -187,22 +187,32 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
     const video = remoteVideoRef.current;
     if (!overlay || !video) return;
     const syncAndDraw = () => {
-      const w = video.videoWidth || 640;
-      const h = video.videoHeight || 360;
-      if (overlay.width !== w || overlay.height !== h) {
-        overlay.width = w;
-        overlay.height = h;
+      const displayW = video.offsetWidth || video.clientWidth || 0;
+      const displayH = video.offsetHeight || video.clientHeight || 0;
+      if (!displayW || !displayH) return;
+      if (overlay.width !== displayW || overlay.height !== displayH) {
+        overlay.width = displayW;
+        overlay.height = displayH;
       }
       const ctx = overlay.getContext('2d');
       if (!ctx) return;
       const lm = data?.pose?.landmarks;
-      if (lm?.length) drawPoseOnCanvas(ctx, lm, overlay.width, overlay.height);
-      else ctx.clearRect(0, 0, overlay.width, overlay.height);
+      if (lm?.length) {
+        // Normalized landmark(0~1)을 실제 video 표시 크기로 스케일링합니다.
+        drawPoseOnCanvas(ctx, lm, displayW, displayH);
+      } else {
+        ctx.clearRect(0, 0, overlay.width, overlay.height);
+      }
     };
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(syncAndDraw) : null;
+    if (ro) ro.observe(video);
     syncAndDraw();
     video.addEventListener('loadedmetadata', syncAndDraw);
+    window.addEventListener('resize', syncAndDraw);
     return () => {
+      ro?.disconnect();
       video.removeEventListener('loadedmetadata', syncAndDraw);
+      window.removeEventListener('resize', syncAndDraw);
     };
   }, [data?.pose?.landmarks, remoteStream]);
 
@@ -210,7 +220,6 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
   const pitch = data?.pitch;
   const korean = data?.korean || {};
   const metrics = data?.metrics || {};
-  const mirroredFrame = data?.mobileFrame?.dataUrl || '';
   const danceTips = Array.isArray(metrics.feedbackTips) ? metrics.feedbackTips : [];
 
   useEffect(() => {
@@ -235,7 +244,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8">
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold">트레이닝 대시보드</h2>
@@ -285,37 +294,29 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
         </div>
         <div className="grid gap-6">
           {selectedTrack === 'dance' && (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
               <h3 className="font-semibold text-cyan-300 mb-3">안무 대시보드</h3>
-              {remoteStream ? (
-                <div className="relative">
-                  <video
-                    ref={remoteVideoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="relative z-0 w-full rounded-xl bg-black border border-slate-800 object-contain max-h-[360px] scale-x-[-1]"
-                  />
-                  <canvas
-                    ref={danceOverlayRef}
-                    className="absolute inset-0 z-10 w-full h-full rounded-xl pointer-events-none bg-transparent scale-x-[-1]"
-                  />
-                </div>
-              ) : mirroredFrame ? (
-                <img
-                  src={mirroredFrame}
-                  alt="mobile-mirror-fallback"
-                  className="w-full rounded-xl bg-black border border-slate-800 object-contain max-h-[360px]"
+              <div className="relative w-full h-[72vh] min-h-[420px] rounded-xl overflow-hidden border border-slate-800 bg-black">
+                <video
+                  ref={remoteVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="absolute inset-0 z-0 h-full w-full object-fill scale-x-[-1]"
                 />
-              ) : (
-                <div className="w-full h-[240px] rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-sm text-slate-500">
-                  모바일 카메라가 아직 연결되지 않았습니다.
-                </div>
-              )}
+                <canvas
+                  ref={danceOverlayRef}
+                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent scale-x-[-1]"
+                />
+                {!remoteStream && (
+                  <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/70 text-sm text-slate-300">
+                    스마트폰 비디오 스트림 연결 대기 중...
+                  </div>
+                )}
+              </div>
               <p className="text-xs text-slate-500 mt-2">
                 실시간 연결 상태: <span className="font-mono">{webrtcStatus}</span>
                 {webrtcError ? ` · 오류: ${webrtcError}` : ''}
-                {!remoteStream && mirroredFrame ? ' · 영상 폴백 사용 중' : ''}
               </p>
               {!remoteStream && (
                 <p className="text-xs text-amber-400 mt-1">

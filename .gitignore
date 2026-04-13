@@ -6,3 +6,6 @@ dist
 !.env.example
 .env.local
 *.log
+
+# Local Netlify folder
+.netlify
