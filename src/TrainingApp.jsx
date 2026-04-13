@@ -42,6 +42,7 @@ const MOBILE_FRAME_WIDTH = 720;
 const MOBILE_FRAME_HEIGHT = 1280;
 const MOBILE_FRAME_JPEG_QUALITY = 0.4;
 const MOBILE_FRAME_INTERVAL_MS = 333;
+const MAX_RENDER_DPR = 1.25;
 
 function angleDeg(ax, ay, bx, by, cx, cy) {
   const v1x = ax - bx;
@@ -274,7 +275,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
     const renderFrame = () => {
       if (cancelled) return;
       let drewBackground = false;
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const dpr = Math.min(MAX_RENDER_DPR, Math.max(1, window.devicePixelRatio || 1));
       const logicalDrawW = Math.max(1, Math.round(canvas.clientWidth || 640));
       const logicalDrawH = Math.max(1, Math.round(canvas.clientHeight || 480));
       const pixelW = Math.round(logicalDrawW * dpr);
@@ -298,7 +299,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
           lastVideoAdvanceAtRef.current = now;
         }
         const stalledMs = lastVideoAdvanceAtRef.current ? now - lastVideoAdvanceAtRef.current : Infinity;
-        const canUseVideo = (webrtcStatus === 'connected' || webrtcStatus === 'disconnected') && stalledMs < 3000;
+        const canUseVideo = stalledMs < 3000;
         if (canUseVideo) {
           ctx.drawImage(video, 0, 0, logicalDrawW, logicalDrawH);
           drewBackground = true;
@@ -328,7 +329,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
       if (danceRenderRafRef.current) cancelAnimationFrame(danceRenderRafRef.current);
       danceRenderRafRef.current = null;
     };
-  }, [remoteStream, webrtcStatus]);
+  }, [remoteStream]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6">
@@ -487,6 +488,7 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
   const lastFrameWrite = useRef(0);
   const debouncedUpdateFrameRef = useRef(null);
   const mirrorCanvasRef = useRef(null);
+  const webrtcStatusRef = useRef('idle');
   const wristHist = useRef([]);
   const rightWristHist = useRef([]);
   const audioCtxRef = useRef(null);
@@ -505,6 +507,10 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
     localStream: camStream,
     enabled: camOn && tab === 'dance' && Boolean(camStream),
   });
+
+  useEffect(() => {
+    webrtcStatusRef.current = webrtcStatus;
+  }, [webrtcStatus]);
 
   const syncTrack = useCallback(
     async (t) => {
@@ -587,7 +593,11 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
           const r = landmarkerRef.current.detectForVideo(video, performance.now());
           const pl = r.poseLandmarks?.[0];
           const now = performance.now();
-          if (video.videoWidth && now - lastFrameWrite.current > MOBILE_FRAME_INTERVAL_MS) {
+          if (
+            webrtcStatusRef.current !== 'connected' &&
+            video.videoWidth &&
+            now - lastFrameWrite.current > MOBILE_FRAME_INTERVAL_MS
+          ) {
             lastFrameWrite.current = now;
             const c = mirrorCanvasRef.current || document.createElement('canvas');
             mirrorCanvasRef.current = c;
