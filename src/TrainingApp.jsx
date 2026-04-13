@@ -42,6 +42,7 @@ const MOBILE_FRAME_WIDTH = 720;
 const MOBILE_FRAME_HEIGHT = 1280;
 const MOBILE_FRAME_JPEG_QUALITY = 0.4;
 const MOBILE_FRAME_INTERVAL_MS = 333;
+const MOBILE_ANALYZE_INTERVAL_MS = 1000 / 24;
 const MAX_RENDER_DPR = 1.25;
 
 function angleDeg(ax, ay, bx, by, cx, cy) {
@@ -397,21 +398,11 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
                   ref={danceCanvasRef}
                   className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent transform-gpu [will-change:transform] object-cover scale-x-[-1]"
                 />
-                {!remoteStream && (
-                  <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/70 text-sm text-slate-300">
-                    스마트폰 비디오 스트림 연결 대기 중...
-                  </div>
-                )}
               </div>
               <p className="text-xs text-slate-500 mt-2">
                 실시간 연결 상태: <span className="font-mono">{webrtcStatus}</span>
                 {webrtcError ? ` · 오류: ${webrtcError}` : ''}
               </p>
-              {!remoteStream && (
-                <p className="text-xs text-amber-400 mt-1">
-                  모바일 안무 탭에서 카메라를 켜고 권한을 허용하면 실제 영상이 여기에 표시됩니다.
-                </p>
-              )}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-xs">
                 <div className="rounded-lg bg-slate-900/80 p-2">활동성 <span className="font-mono text-white">{metrics.danceActivity ?? '—'}</span></div>
                 <div className="rounded-lg bg-slate-900/80 p-2">팔 정확도 <span className="font-mono text-white">{metrics.armAccuracy ?? '—'}</span></div>
@@ -486,6 +477,8 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
   const rafRef = useRef(null);
   const lastPoseWrite = useRef(0);
   const lastFrameWrite = useRef(0);
+  const lastAnalyzeAtRef = useRef(0);
+  const latestPoseLandmarksRef = useRef(null);
   const debouncedUpdateFrameRef = useRef(null);
   const mirrorCanvasRef = useRef(null);
   const webrtcStatusRef = useRef('idle');
@@ -590,9 +583,13 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
             rafRef.current = requestAnimationFrame(loop);
             return;
           }
-          const r = landmarkerRef.current.detectForVideo(video, performance.now());
-          const pl = r.poseLandmarks?.[0];
           const now = performance.now();
+          if (now - lastAnalyzeAtRef.current >= MOBILE_ANALYZE_INTERVAL_MS) {
+            lastAnalyzeAtRef.current = now;
+            const r = landmarkerRef.current.detectForVideo(video, now);
+            latestPoseLandmarksRef.current = r.poseLandmarks?.[0] || null;
+          }
+          const pl = latestPoseLandmarksRef.current;
           if (
             webrtcStatusRef.current !== 'connected' &&
             video.videoWidth &&
@@ -751,6 +748,8 @@ function TrainingMobile({ db, appId, sessionId, onBack }) {
       setDanceRealtime(null);
       landmarkerRef.current?.close?.();
       landmarkerRef.current = null;
+      latestPoseLandmarksRef.current = null;
+      lastAnalyzeAtRef.current = 0;
       wristHist.current = [];
       rightWristHist.current = [];
       updateDoc(sessionRef, {
