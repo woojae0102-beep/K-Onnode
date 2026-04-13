@@ -176,6 +176,38 @@ function drawPoseOnCanvas(ctx, landmarks, w, h, clearFirst = true) {
   }
 }
 
+function drawPoseOnCoverCanvas(ctx, landmarks, boxW, boxH, srcW, srcH) {
+  if (!landmarks?.length || !srcW || !srcH || !boxW || !boxH) return;
+  ctx.clearRect(0, 0, boxW, boxH);
+  const scale = Math.max(boxW / srcW, boxH / srcH);
+  const drawW = srcW * scale;
+  const drawH = srcH * scale;
+  const offsetX = (boxW - drawW) / 2;
+  const offsetY = (boxH - drawH) / 2;
+  const tx = (x) => x * srcW * scale + offsetX;
+  const ty = (y) => y * srcH * scale + offsetY;
+
+  ctx.strokeStyle = 'rgba(0, 255, 255, 0.8)';
+  ctx.lineWidth = 3;
+  for (const [a, b] of POSE_EDGES) {
+    const pa = landmarks[a];
+    const pb = landmarks[b];
+    if (!pa || !pb || (pa.v ?? pa.visibility ?? 1) < 0.3 || (pb.v ?? pb.visibility ?? 1) < 0.3) continue;
+    ctx.beginPath();
+    ctx.moveTo(tx(pa.x), ty(pa.y));
+    ctx.lineTo(tx(pb.x), ty(pb.y));
+    ctx.stroke();
+  }
+  ctx.fillStyle = 'rgba(248, 250, 252, 0.95)';
+  for (let i = 0; i < landmarks.length; i += 1) {
+    const p = landmarks[i];
+    if (!p || (p.v ?? p.visibility ?? 1) < 0.25) continue;
+    ctx.beginPath();
+    ctx.arc(tx(p.x), ty(p.y), 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 function analyzeKorean(reference, userInput) {
   const ref = (reference || '').trim();
   const user = (userInput || '').trim();
@@ -336,19 +368,23 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
     const vh = Number(video.videoHeight || 0);
     if (!vw || !vh) return;
 
-    if (canvas.width !== vw || canvas.height !== vh) {
-      canvas.width = vw;
-      canvas.height = vh;
+    const boxW = Math.max(1, Math.round(wrapper?.clientWidth || video.clientWidth || 640));
+    const boxH = Math.max(1, Math.round(wrapper?.clientHeight || video.clientHeight || 480));
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const pixelW = Math.round(boxW * dpr);
+    const pixelH = Math.round(boxH * dpr);
+    if (canvas.width !== pixelW || canvas.height !== pixelH) {
+      canvas.width = pixelW;
+      canvas.height = pixelH;
     }
-    if (wrapper) {
-      wrapper.style.minHeight = 'calc(100vh - 240px)';
-    }
+    canvas.style.aspectRatio = `${boxW} / ${boxH}`;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.clearRect(0, 0, vw, vh);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, boxW, boxH);
     const lm = latestPoseRef.current;
-    if (lm?.length) drawPoseOnCanvas(ctx, lm, vw, vh, false);
+    if (lm?.length) drawPoseOnCoverCanvas(ctx, lm, boxW, boxH, vw, vh);
   }, []);
 
   useEffect(() => {
@@ -456,14 +492,14 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
               <h3 className="font-semibold text-cyan-300 mb-3">안무 대시보드</h3>
               <div
                 ref={videoWrapperRef}
-                className="video-wrapper relative mx-auto w-full overflow-hidden rounded-xl border border-slate-800 bg-transparent aspect-[9/16] flex items-center justify-center"
-                style={{ minHeight: 'calc(100vh - 240px)', maxWidth: 'min(100%, 56.25vh)' }}
+                className="video-wrapper relative w-full overflow-hidden rounded-xl border border-slate-800 bg-transparent"
+                style={{ minHeight: 'calc(100vh - 220px)', height: '78vh' }}
               >
                 {mirroredFrame ? (
                   <img
                     src={mirroredFrame}
                     alt="mobile-frame-fallback"
-                    className="absolute inset-0 h-full w-full object-contain bg-transparent"
+                    className="absolute inset-0 h-full w-full object-cover bg-transparent"
                   />
                 ) : null}
                 <video
@@ -471,13 +507,13 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
                   autoPlay
                   playsInline
                   muted
-                  className={`absolute inset-0 h-full w-full object-contain bg-transparent scale-x-[-1] transition-opacity duration-200 ${
+                  className={`absolute inset-0 h-full w-full object-cover bg-transparent scale-x-[-1] transition-opacity duration-200 ${
                     remoteStream && remoteVideoReady ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
                 <canvas
                   ref={danceCanvasRef}
-                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent transform-gpu [will-change:transform] object-contain scale-x-[-1]"
+                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent transform-gpu [will-change:transform] object-cover scale-x-[-1]"
                 />
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3 text-xs">
