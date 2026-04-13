@@ -38,9 +38,9 @@ const POSE_EDGES = [
 
 const SAMPLE_KO =
   '안녕하세요, 오늘도 열심히 연습해 볼게요. 발음을 또렷하게 하면서 천천히 읽어 주세요.';
-const MOBILE_FRAME_WIDTH = 480;
-const MOBILE_FRAME_HEIGHT = 360;
-const MOBILE_FRAME_JPEG_QUALITY = 0.5;
+const MOBILE_FRAME_WIDTH = 720;
+const MOBILE_FRAME_HEIGHT = 1280;
+const MOBILE_FRAME_JPEG_QUALITY = 0.8;
 const MOBILE_FRAME_INTERVAL_MS = 1000 / 30;
 
 function angleDeg(ax, ay, bx, by, cx, cy) {
@@ -78,6 +78,18 @@ function drawPoseOnCanvas(ctx, landmarks, w, h, clearFirst = true) {
     ctx.arc(p.x * w, p.y * h, 4, 0, Math.PI * 2);
     ctx.fill();
   }
+}
+
+function rotateLandmarksClockwise(landmarks) {
+  if (!Array.isArray(landmarks)) return landmarks;
+  return landmarks.map((p) => {
+    if (!p) return p;
+    return {
+      ...p,
+      x: 1 - p.y,
+      y: p.x,
+    };
+  });
 }
 
 function analyzeKorean(reference, userInput) {
@@ -254,6 +266,12 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
     if (!video || !canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    canvas.style.width = '100%';
+    canvas.style.height = 'auto';
+    canvas.style.aspectRatio = 'auto';
+    canvas.style.objectFit = 'contain';
+    canvas.style.willChange = 'transform';
+    canvas.style.transform = 'translateZ(0)';
 
     let cancelled = false;
     if (!canvas.width || !canvas.height) {
@@ -263,32 +281,78 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
     const renderFrame = () => {
       if (cancelled) return;
       let drewBackground = false;
+      let rotatedFrame = false;
+      let logicalDrawW = canvas.width / Math.max(1, window.devicePixelRatio || 1);
+      let logicalDrawH = canvas.height / Math.max(1, window.devicePixelRatio || 1);
       const vw = video.videoWidth || 0;
       const vh = video.videoHeight || 0;
       // 원인1 대응: 비디오 프레임 데이터가 준비된 경우에만 drawImage를 호출합니다.
       if (video.readyState >= 2 && vw > 0 && vh > 0) {
-        if (canvas.width !== vw || canvas.height !== vh) {
-          canvas.width = vw;
-          canvas.height = vh;
+        const isPortrait = vh > vw;
+        const logicalW = isPortrait ? vh : vw;
+        const logicalH = isPortrait ? vw : vh;
+        const dpr = Math.max(1, window.devicePixelRatio || 1);
+        const pixelW = Math.round(logicalW * dpr);
+        const pixelH = Math.round(logicalH * dpr);
+        if (canvas.width !== pixelW || canvas.height !== pixelH) {
+          canvas.width = pixelW;
+          canvas.height = pixelH;
         }
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        if (isPortrait) {
+          ctx.save();
+          ctx.translate(logicalW / 2, logicalH / 2);
+          ctx.rotate(Math.PI / 2);
+          ctx.drawImage(video, -vw / 2, -vh / 2, vw, vh);
+          ctx.restore();
+          rotatedFrame = true;
+        } else {
+          ctx.drawImage(video, 0, 0, logicalW, logicalH);
+        }
+        logicalDrawW = logicalW;
+        logicalDrawH = logicalH;
         drewBackground = true;
       } else {
         // 최신 프레임만 유지되는 재사용 Image 폴백 렌더링입니다.
         const img = latestFrameImageRef.current;
         if (img?.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-          if (canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
+          const iw = img.naturalWidth;
+          const ih = img.naturalHeight;
+          const isPortrait = ih > iw;
+          const logicalW = isPortrait ? ih : iw;
+          const logicalH = isPortrait ? iw : ih;
+          const dpr = Math.max(1, window.devicePixelRatio || 1);
+          const pixelW = Math.round(logicalW * dpr);
+          const pixelH = Math.round(logicalH * dpr);
+          if (canvas.width !== pixelW || canvas.height !== pixelH) {
+            canvas.width = pixelW;
+            canvas.height = pixelH;
           }
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          if (isPortrait) {
+            ctx.save();
+            ctx.translate(logicalW / 2, logicalH / 2);
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(img, -iw / 2, -ih / 2, iw, ih);
+            ctx.restore();
+            rotatedFrame = true;
+          } else {
+            ctx.drawImage(img, 0, 0, logicalW, logicalH);
+          }
+          logicalDrawW = logicalW;
+          logicalDrawH = logicalH;
           drewBackground = true;
         }
       }
       const lm = latestPoseRef.current;
       if (drewBackground && lm?.length) {
         // 원인3 대응: canvas 실치수 기준으로 skeleton을 같은 프레임 위에 오버레이합니다.
-        drawPoseOnCanvas(ctx, lm, canvas.width, canvas.height, false);
+        const poseToDraw = rotatedFrame ? rotateLandmarksClockwise(lm) : lm;
+        drawPoseOnCanvas(ctx, poseToDraw, logicalDrawW, logicalDrawH, false);
       }
       danceRenderRafRef.current = requestAnimationFrame(renderFrame);
     };
@@ -365,7 +429,7 @@ function TrainingLaptopDashboard({ db, appId, sessionId, onBack }) {
                 />
                 <canvas
                   ref={danceCanvasRef}
-                  className="absolute inset-0 z-10 h-full w-full pointer-events-none bg-transparent transform-gpu [will-change:transform] scale-x-[-1]"
+                  className="absolute left-0 top-0 z-10 w-full h-auto pointer-events-none bg-transparent transform-gpu [will-change:transform] [aspect-ratio:auto] object-contain scale-x-[-1]"
                 />
                 {!remoteStream && (
                   <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/70 text-sm text-slate-300">
