@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Send, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import DanceTrainingView from './DanceTrainingView';
@@ -20,6 +20,13 @@ const QUICK_COMMANDS = [
   { id: 'trend', label: '/최근 추이 보여줘' },
   { id: 'growth', label: '/성장 리포트 보여줘' },
 ];
+const BOTTOM_TABS = [
+  { id: 'chat', label: 'AI코칭', feature: 'none' },
+  { id: 'dance', label: '댄스', feature: 'dance' },
+  { id: 'vocal', label: '보컬', feature: 'vocal' },
+  { id: 'korean', label: '한국어', feature: 'korean-pronunciation' },
+  { id: 'report', label: '리포트', feature: 'report' },
+];
 
 const MODE_REPLY = {
   dance: '댄스 연습을 실행합니다. 카메라를 켜고 자세/동작 피드백을 확인해보세요.',
@@ -31,6 +38,13 @@ const MODE_REPLY = {
   none: '채팅 모드로 복귀했습니다. "댄스", "보컬", "한국어 발음연습"처럼 입력하면 기능을 다시 열 수 있어요.',
 };
 const STORAGE_KEY = 'onnode_growth_sessions_v1';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_API_KEY || '';
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-1.5-flash';
+const COACH_TONES = [
+  { id: 'friendly', label: '친절형' },
+  { id: 'strict', label: '엄격형' },
+  { id: 'brief', label: '짧은형' },
+];
 
 function createMessage(role, text, extra = {}) {
   return {
@@ -47,6 +61,68 @@ function detectReportTarget(text) {
   if (text.includes('보컬') || text.includes('노래') || text.includes('음정')) return 'vocal';
   if (text.includes('한국어') || text.includes('발음') || text.includes('가사')) return 'korean';
   return 'all';
+}
+
+function tabFromFeature(feature) {
+  if (feature === 'dance') return 'dance';
+  if (feature === 'vocal') return 'vocal';
+  if (String(feature || '').startsWith('korean')) return 'korean';
+  return 'chat';
+}
+
+function parseDayKey(key) {
+  if (!key) return new Date();
+  const [y, m, d] = String(key).split('-').map((x) => Number(x));
+  if (!y || !m || !d) return new Date();
+  return new Date(y, m - 1, d);
+}
+
+function inSelectedPeriod(at, period, reportDate) {
+  const date = new Date(at);
+  const anchor = parseDayKey(reportDate);
+  if (period === 'daily') return dayKey(date.getTime()) === dayKey(anchor.getTime());
+  if (period === 'weekly') {
+    const end = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate(), 23, 59, 59, 999);
+    const start = new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000);
+    return date >= start && date <= end;
+  }
+  const monthMatch = date.getFullYear() === anchor.getFullYear() && date.getMonth() === anchor.getMonth();
+  return monthMatch;
+}
+
+function buildPeriodSummary(target, persistedSessions, period, reportDate) {
+  const scoped = (persistedSessions || []).filter((item) => (target === 'all' ? true : item.domain === target || (target === 'korean' && item.domain === 'korean')));
+  const filtered = scoped.filter((item) => inSelectedPeriod(item.at, period, reportDate));
+  if (!filtered.length) {
+    return {
+      title: '기간별 요약',
+      lines: ['선택한 기간의 데이터가 없습니다. 날짜를 바꾸거나 연습 데이터를 더 쌓아보세요.'],
+      stats: { sessions: 0, average: null, best: null, worst: null },
+    };
+  }
+  const scores = filtered.map((item) => Number(item.score)).filter((v) => Number.isFinite(v));
+  const avg = average(scores);
+  const best = Math.max(...scores);
+  const worst = Math.min(...scores);
+  const byDomain = filtered.reduce((acc, item) => {
+    if (!acc[item.domain]) acc[item.domain] = [];
+    acc[item.domain].push(item.score);
+    return acc;
+  }, {});
+  const lines = Object.keys(byDomain).map((domain) => {
+    const ds = byDomain[domain];
+    return `${domain.toUpperCase()}: 평균 ${round1(average(ds))} · 최고 ${Math.max(...ds)} · 세션 ${ds.length}`;
+  });
+  return {
+    title: period === 'daily' ? '일간 요약' : period === 'weekly' ? '주간 요약' : '월간 요약',
+    lines,
+    stats: {
+      sessions: filtered.length,
+      average: round1(avg),
+      best,
+      worst,
+    },
+  };
 }
 
 function getLatestKoreanReport(koreanReports) {
@@ -259,11 +335,17 @@ function detectIntent(rawText) {
   const reportKeywords = ['리포트', '보고서', '결과', '요약', '피드백'];
   const trendKeywords = ['추이', '트렌드', '변화', '최근', '주간'];
   const growthKeywords = ['성장', '어제', '지난주', '개선', '좋아졌', '향상'];
+  const monthlyKeywords = ['월간', '이번달', '이번 달', 'month'];
+  const dailyKeywords = ['일간', '오늘', 'day'];
   const jsonKeywords = ['json', '원본', '상세', '디테일', '데이터'];
   if (reportKeywords.some((k) => text.includes(k)) || trendKeywords.some((k) => text.includes(k)) || growthKeywords.some((k) => text.includes(k))) {
+    let period = 'weekly';
+    if (monthlyKeywords.some((k) => text.includes(k))) period = 'monthly';
+    else if (dailyKeywords.some((k) => text.includes(k))) period = 'daily';
     return {
       type: 'report',
       target: detectReportTarget(text),
+      period,
       includeTrend: true,
       includeGrowth: true,
       includeJson: jsonKeywords.some((k) => text.includes(k)) || text.includes('리포트'),
@@ -281,17 +363,21 @@ function detectIntent(rawText) {
   return { type: 'chat' };
 }
 
-function buildReportCard(target, reports, reportHistory, persistedSessions, options = {}) {
+function buildReportCard(target, reports, reportHistory, persistedSessions, period = 'weekly', reportDate = dayKey(Date.now()), options = {}) {
   const includeTrend = options.includeTrend !== false;
   const includeJson = options.includeJson !== false;
   const includeGrowth = options.includeGrowth !== false;
   const lines = [];
   const trendLines = [];
+  const periodSummary = buildPeriodSummary(target, persistedSessions, period, reportDate);
   const jsonPayload = {
     generatedAt: new Date().toISOString(),
     target,
+    period,
+    reportDate,
     latest: {},
     recentHistory: {},
+    periodSummary,
   };
 
   if (target === 'all' || target === 'dance') {
@@ -330,6 +416,7 @@ function buildReportCard(target, reports, reportHistory, persistedSessions, opti
       title: '연습 리포트',
       body: ['아직 수집된 연습 데이터가 없습니다.', '먼저 댄스/보컬/한국어 모드를 실행하고 10초 이상 연습해 주세요.'],
       text: '아직 리포트 데이터가 없어요. 모드를 실행해서 먼저 연습 데이터를 쌓아주세요.',
+      periodSummary,
       trend: [],
       growth: null,
       jsonText: '',
@@ -339,6 +426,7 @@ function buildReportCard(target, reports, reportHistory, persistedSessions, opti
   return {
     title: target === 'all' ? '오늘의 통합 리포트' : `${target.toUpperCase()} 리포트`,
     body: lines,
+    periodSummary,
     trend: includeTrend ? trendLines : [],
     growth,
     jsonText: includeJson
@@ -353,6 +441,127 @@ function buildReportCard(target, reports, reportHistory, persistedSessions, opti
       : '',
     text: `요청하신 ${target === 'all' ? '오늘의 통합' : target} 리포트에 성장 분석(어제/지난주 비교)까지 정리해드릴게요.`,
   };
+}
+
+function buildCompactContext({ activeFeature, reports, reportHistory, persistedSessions, reportPeriod, reportDate, reportCard }) {
+  const latestKorean = getLatestKoreanReport(reports?.korean || {});
+  return {
+    activeFeature,
+    reportPeriod,
+    reportDate,
+    latest: {
+      dance: reports?.dance
+        ? {
+            score: reports.dance.score,
+            needs: reports.dance?.summary?.needs,
+            issue: reports.dance?.issue,
+            updatedAt: reports.dance.updatedAt,
+          }
+        : null,
+      vocal: reports?.vocal
+        ? {
+            liveScore: reports.vocal.liveScore,
+            note: reports.vocal.currentNote,
+            hz: reports.vocal.currentHz,
+            pitchFeedback: reports.vocal.pitchFeedback,
+            tuningState: reports.vocal.tuningState,
+            updatedAt: reports.vocal.updatedAt,
+          }
+        : null,
+      korean: latestKorean
+        ? {
+            overall: latestKorean?.metrics?.overall ?? latestKorean?.overall,
+            transcript: latestKorean?.transcript,
+            updatedAt: latestKorean?.updatedAt,
+          }
+        : null,
+    },
+    trend: {
+      dance: (reportHistory?.dance || []).slice(-8),
+      vocal: (reportHistory?.vocal || []).slice(-8),
+      korean: (reportHistory?.korean || []).slice(-8),
+    },
+    growth: reportCard?.growth
+      ? {
+          achievement: reportCard.growth.achievement,
+          routines: (reportCard.growth.routines || []).map((item) => item?.label || item).slice(0, 4),
+        }
+      : null,
+    sessionCount: (persistedSessions || []).length,
+  };
+}
+
+function buildFallbackCoachReply(input, reportCard, context) {
+  const text = String(input || '');
+  const danceNeeds = context?.latest?.dance?.needs;
+  const vocalFeedback = context?.latest?.vocal?.pitchFeedback;
+  const koreanScore = context?.latest?.korean?.overall;
+  if (text.includes('부족') || text.includes('개선')) {
+    const lines = [];
+    if (danceNeeds) lines.push(`댄스는 ${danceNeeds} 보완이 우선이에요.`);
+    if (vocalFeedback) lines.push(`보컬은 현재 "${vocalFeedback}" 피드백이 핵심입니다.`);
+    if (koreanScore != null) lines.push(`한국어는 현재 종합 ${koreanScore}점으로 정확도 유지 훈련이 필요해요.`);
+    if (!lines.length) lines.push('아직 데이터가 적어요. 각 모드를 5분 이상 연습하면 정확하게 분석해줄 수 있어요.');
+    return lines.join(' ');
+  }
+  if (text.includes('연습') || text.includes('루틴') || text.includes('해야')) {
+    const routines = reportCard?.growth?.routines || [];
+    if (routines.length) return `추천 루틴은 다음 순서로 진행해보세요: 1) ${routines[0].label || routines[0]} 2) ${routines[1]?.label || routines[1] || '보컬/한국어 5분 보완 루틴'}`;
+    return '먼저 댄스/보컬/한국어 중 하나를 3~5분 연습하면 개인 맞춤 루틴을 바로 추천해줄게요.';
+  }
+  return '좋아요. 지금 데이터 기준으로 연습 우선순위와 개선 포인트를 바로 분석해줄게요. "부족한 게 뭐야?" 또는 "오늘 뭐 연습해야 돼?"라고 물어봐줘도 됩니다.';
+}
+
+function toneInstruction(tone) {
+  if (tone === 'strict') return '톤: 코치처럼 엄격하고 직설적이되 무례하지 않게.';
+  if (tone === 'brief') return '톤: 핵심만 짧고 명확하게. 문장 수를 최소화.';
+  return '톤: 친절하고 동기부여 중심.';
+}
+
+async function requestGeminiCoachReply({ input, conversationSnapshot, context, reportCard, coachTone = 'friendly' }) {
+  if (!GEMINI_API_KEY) return buildFallbackCoachReply(input, reportCard, context);
+
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(
+    GEMINI_API_KEY
+  )}`;
+  const recentMessages = (conversationSnapshot || []).slice(-8).map((msg) => `${msg.role === 'assistant' ? 'AI' : 'USER'}: ${msg.text}`).join('\n');
+  const prompt = [
+    '당신은 ONNODE의 AI 코치입니다.',
+    '목표: 사용자의 질문 의도를 파악하고, 주어진 실시간 연습/리포트 데이터를 근거로 개인화 피드백을 제공합니다.',
+    toneInstruction(coachTone),
+    '규칙:',
+    '- 반드시 한국어로 답변',
+    '- 3~6문장으로 간결하게',
+    '- 가능하면 수치(점수/추이/달성률)를 1개 이상 포함',
+    '- 마지막 문장에는 바로 실행 가능한 다음 연습 1개 제시',
+    `현재 코칭 데이터(JSON): ${JSON.stringify(context)}`,
+    reportCard ? `최근 리포트 카드(JSON): ${JSON.stringify(reportCard)}` : '',
+    recentMessages ? `최근 대화:\n${recentMessages}` : '',
+    `사용자 질문: ${input}`,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.55,
+        topP: 0.9,
+        maxOutputTokens: 380,
+      },
+    }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    const reason = data?.error?.message || `Gemini 호출 실패 (${response.status})`;
+    throw new Error(reason);
+  }
+  const text = data?.candidates?.[0]?.content?.parts?.map((p) => p?.text || '').join('').trim();
+  if (!text) throw new Error('Gemini 응답이 비어 있습니다.');
+  return text;
 }
 
 function renderFeatureComponent(feature, onReportUpdate) {
@@ -375,6 +584,11 @@ export default function AICoachView() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [activeFeature, setActiveFeature] = useState('none');
+  const [activeTab, setActiveTab] = useState('chat');
+  const [coachTone, setCoachTone] = useState('friendly');
+  const [reportPeriod, setReportPeriod] = useState('weekly');
+  const [reportDate, setReportDate] = useState(dayKey(Date.now()));
+  const [coachLoading, setCoachLoading] = useState(false);
   const [lastReportCard, setLastReportCard] = useState(null);
   const [reports, setReports] = useState({
     dance: null,
@@ -434,14 +648,18 @@ export default function AICoachView() {
   const showQuickCommands = inputValue.startsWith('/');
   const featureComponent = useMemo(() => renderFeatureComponent(activeFeature, onReportUpdate), [activeFeature, onReportUpdate]);
 
-  const handleSubmitMessage = (rawText) => {
+  const handleSubmitMessage = async (rawText) => {
+    if (coachLoading) return;
     const content = rawText.trim();
     if (!content) return;
-    setMessages((prev) => [...prev, createMessage('user', content)]);
+    const userMessage = createMessage('user', content);
+    const conversationSnapshot = [...messages, { role: 'user', text: content }];
+    setMessages((prev) => [...prev, userMessage]);
     const intent = detectIntent(content);
 
     if (intent.type === 'feature') {
       setActiveFeature(intent.feature);
+      setActiveTab(tabFromFeature(intent.feature));
       const reply = MODE_REPLY[intent.feature] || MODE_REPLY.none;
       setMessages((prev) => [...prev, createMessage('assistant', reply)]);
       setInputValue('');
@@ -449,7 +667,10 @@ export default function AICoachView() {
     }
 
     if (intent.type === 'report') {
-      const card = buildReportCard(intent.target, reports, reportHistory, persistedSessions, {
+      setActiveTab('report');
+      setActiveFeature('none');
+      setReportPeriod(intent.period || 'weekly');
+      const card = buildReportCard(intent.target, reports, reportHistory, persistedSessions, intent.period || reportPeriod, reportDate, {
         includeTrend: intent.includeTrend,
         includeGrowth: intent.includeGrowth,
         includeJson: intent.includeJson,
@@ -457,23 +678,31 @@ export default function AICoachView() {
       setLastReportCard(card);
       setMessages((prev) => [...prev, createMessage('assistant', card.text)]);
       setInputValue('');
+      setCoachLoading(true);
+      try {
+        const coachReply = await generateCoachReply(content, [...conversationSnapshot, { role: 'assistant', text: card.text }], card);
+        setMessages((prev) => [...prev, createMessage('assistant', coachReply)]);
+      } finally {
+        setCoachLoading(false);
+      }
       return;
     }
 
-    setMessages((prev) => [
-      ...prev,
-      createMessage(
-        'assistant',
-        '의도를 인식했어요. 기능 실행은 "댄스/보컬/한국어 발음연습", 리포트는 "오늘 연습 리포트 보여줘"처럼 입력해 주세요.'
-      ),
-    ]);
     setInputValue('');
+    setCoachLoading(true);
+    try {
+      const coachReply = await generateCoachReply(content, conversationSnapshot, lastReportCard);
+      setMessages((prev) => [...prev, createMessage('assistant', coachReply)]);
+    } finally {
+      setCoachLoading(false);
+    }
   };
 
   const runRoutine = (routine) => {
     const feature = routine?.feature || 'none';
     if (feature === 'none') return;
     setActiveFeature(feature);
+    setActiveTab(tabFromFeature(feature));
     const baseReply = MODE_REPLY[feature] || '추천 루틴에 맞는 연습 모드를 실행합니다.';
     setMessages((prev) => [
       ...prev,
@@ -481,152 +710,314 @@ export default function AICoachView() {
     ]);
   };
 
+  const refreshReportCard = useCallback(
+    (target = 'all', period = reportPeriod, date = reportDate) => {
+      const card = buildReportCard(target, reports, reportHistory, persistedSessions, period, date, {
+        includeTrend: true,
+        includeGrowth: true,
+        includeJson: true,
+      });
+      setLastReportCard(card);
+    },
+    [persistedSessions, reportDate, reportHistory, reportPeriod, reports]
+  );
+
+  const generateCoachReply = useCallback(
+    async (userInput, conversationSnapshot, reportCard = null) => {
+      const context = buildCompactContext({
+        activeFeature,
+        reports,
+        reportHistory,
+        persistedSessions,
+        reportPeriod,
+        reportDate,
+        reportCard,
+      });
+      try {
+        return await requestGeminiCoachReply({
+          input: userInput,
+          conversationSnapshot,
+          context,
+          reportCard,
+          coachTone,
+        });
+      } catch (error) {
+        const fallback = buildFallbackCoachReply(userInput, reportCard, context);
+        return `${fallback}\n\n(참고: AI 연결 오류 - ${error?.message || 'unknown error'})`;
+      }
+    },
+    [activeFeature, coachTone, persistedSessions, reportDate, reportHistory, reportPeriod, reports]
+  );
+
+  const handleBottomTab = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === 'chat') {
+      setActiveFeature('none');
+      return;
+    }
+    if (tabId === 'report') {
+      setActiveFeature('none');
+      refreshReportCard('all', reportPeriod, reportDate);
+      return;
+    }
+    const tab = BOTTOM_TABS.find((item) => item.id === tabId);
+    if (tab?.feature) {
+      setActiveFeature(tab.feature);
+      setMessages((prev) => [...prev, createMessage('assistant', MODE_REPLY[tab.feature] || '요청한 모드를 실행합니다.')]);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab !== 'report') return;
+    refreshReportCard('all', reportPeriod, reportDate);
+  }, [activeTab, reportDate, reportPeriod, refreshReportCard]);
+
   return (
     <div className="h-full flex flex-col bg-white">
       <header className="h-16 border-b border-[#E5E5E5] px-6 flex items-center justify-between">
         <div>
           <p className="font-bold text-[#111111]">{t('views.aicoach')}</p>
-          <p className="text-xs text-slate-500 mt-0.5">현재 화면: 채팅 단일 UI · 활성 기능: {activeFeature === 'none' ? '없음' : activeFeature}</p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            현재 화면: 채팅 단일 UI · 탭: {activeTab} · 활성 기능: {activeFeature === 'none' ? '없음' : activeFeature}
+          </p>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#F5F5F7]">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className="w-9 h-9 bg-white border border-[#E5E5E5] rounded-xl grid place-items-center">
-              <User size={16} className="text-slate-400" />
-            </div>
-            <div className={`max-w-[72%] ${msg.role === 'user' ? 'text-right' : ''}`}>
-              <div
-                className={`inline-block px-4 py-2 text-sm ${
-                  msg.role === 'user'
-                    ? 'bg-[#FF1F8E] text-white rounded-[16px_16px_4px_16px]'
-                    : 'bg-white text-[#111111] rounded-[16px_16px_16px_4px] border border-[#E5E5E5]'
-                }`}
-              >
-                {msg.text}
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {lastReportCard ? (
-          <div className="rounded-2xl border border-[#E5E5E5] bg-white p-4 space-y-2">
-            <p className="text-sm font-semibold text-[#111111]">{lastReportCard.title}</p>
-            {lastReportCard.body.map((line, idx) => (
-              <p key={`${idx}-${line.slice(0, 12)}`} className="text-xs text-[#666666]">- {line}</p>
-            ))}
-            {lastReportCard.trend?.length ? (
-              <div className="rounded-lg bg-[#F7F7F8] border border-[#E5E5E5] p-2 space-y-1">
-                <p className="text-xs font-semibold text-[#111111]">최근 추이</p>
-                {lastReportCard.trend.map((line, idx) => (
-                  <p key={`${idx}-${line.slice(0, 12)}`} className="text-[11px] text-[#666666]">- {line}</p>
+      {activeTab === 'chat' ? (
+        <>
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#F5F5F7]">
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-3">
+              <p className="text-[11px] text-[#666666] mb-2">코치 스타일</p>
+              <div className="flex gap-2">
+                {COACH_TONES.map((tone) => (
+                  <button
+                    key={tone.id}
+                    type="button"
+                    onClick={() => setCoachTone(tone.id)}
+                    className={`rounded-md px-2 py-1 text-[11px] border ${
+                      coachTone === tone.id ? 'bg-[#FF1F8E] text-white border-[#FF1F8E]' : 'bg-white text-[#666666] border-[#E5E5E5]'
+                    }`}
+                  >
+                    {tone.label}
+                  </button>
                 ))}
               </div>
-            ) : null}
-            {lastReportCard.growth ? (
-              <div className="rounded-lg bg-[#F8F7FF] border border-[#E5E5E5] p-2 space-y-1">
-                <p className="text-xs font-semibold text-[#111111]">성장 분석 (어제/지난주 대비)</p>
-                {lastReportCard.growth.lines.map((line, idx) => (
-                  <p key={`${idx}-${line.slice(0, 12)}`} className="text-[11px] text-[#666666]">- {line}</p>
-                ))}
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  <div className="rounded-md border border-[#E5E5E5] bg-white px-2 py-1">
-                    <p className="text-[10px] text-[#888888]">목표 점수</p>
-                    <p className="text-xs font-semibold text-[#111111]">{lastReportCard.growth.achievement?.targetScore ?? '—'}</p>
-                  </div>
-                  <div className="rounded-md border border-[#E5E5E5] bg-white px-2 py-1">
-                    <p className="text-[10px] text-[#888888]">오늘 달성률</p>
-                    <p className="text-xs font-semibold text-[#111111]">
-                      {lastReportCard.growth.achievement?.todayAchievementRate == null
-                        ? '—'
-                        : `${lastReportCard.growth.achievement.todayAchievementRate}%`}
-                    </p>
-                  </div>
-                  <div className="rounded-md border border-[#E5E5E5] bg-white px-2 py-1">
-                    <p className="text-[10px] text-[#888888]">주간 진행률</p>
-                    <p className="text-xs font-semibold text-[#111111]">
-                      {lastReportCard.growth.achievement?.weeklyGoalProgress == null
-                        ? '—'
-                        : `${lastReportCard.growth.achievement.weeklyGoalProgress}%`}
-                    </p>
+            </div>
+            {messages.map((msg) => (
+              <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                <div className="w-9 h-9 bg-white border border-[#E5E5E5] rounded-xl grid place-items-center">
+                  <User size={16} className="text-slate-400" />
+                </div>
+                <div className={`max-w-[72%] ${msg.role === 'user' ? 'text-right' : ''}`}>
+                  <div
+                    className={`inline-block px-4 py-2 text-sm ${
+                      msg.role === 'user'
+                        ? 'bg-[#FF1F8E] text-white rounded-[16px_16px_4px_16px]'
+                        : 'bg-white text-[#111111] rounded-[16px_16px_16px_4px] border border-[#E5E5E5]'
+                    }`}
+                  >
+                    {msg.text}
                   </div>
                 </div>
-                {lastReportCard.growth.routines?.length ? (
-                  <div className="rounded-md border border-[#E5E5E5] bg-white p-2 mt-2 space-y-1">
-                    <p className="text-[11px] font-semibold text-[#111111]">추천 루틴 / 연습 추천</p>
-                    {lastReportCard.growth.routines.map((routine, idx) => (
-                      <div key={`${idx}-${routine.label.slice(0, 12)}`} className="flex items-start gap-2">
-                        <p className="flex-1 text-[11px] text-[#666666]">- {routine.label}</p>
-                        {routine.feature !== 'none' ? (
-                          <button
-                            type="button"
-                            onClick={() => runRoutine(routine)}
-                            className="shrink-0 rounded-md border border-[#FF1F8E] px-2 py-0.5 text-[10px] text-[#FF1F8E] hover:bg-[#FF1F8E12]"
-                          >
-                            실행
-                          </button>
-                        ) : null}
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
+              </div>
+            ))}
+            {coachLoading ? (
+              <div className="flex gap-3">
+                <div className="w-9 h-9 bg-white border border-[#E5E5E5] rounded-xl grid place-items-center">
+                  <User size={16} className="text-slate-400" />
+                </div>
+                <div className="inline-block px-4 py-2 text-sm bg-white text-[#111111] rounded-[16px_16px_16px_4px] border border-[#E5E5E5]">
+                  AI 코치가 데이터를 분석 중입니다...
+                </div>
               </div>
             ) : null}
-            {lastReportCard.jsonText ? (
-              <details className="rounded-lg border border-[#E5E5E5] bg-[#FCFCFD] p-2">
-                <summary className="cursor-pointer text-xs font-semibold text-[#111111]">상세 JSON 리포트</summary>
-                <pre className="mt-2 text-[10px] leading-4 text-[#555555] overflow-x-auto">{lastReportCard.jsonText}</pre>
-              </details>
-            ) : null}
           </div>
-        ) : null}
 
-        {featureComponent ? (
-          <div className="rounded-2xl border border-[#E5E5E5] bg-white overflow-hidden">
-            <div className="px-4 py-2 border-b border-[#E5E5E5] bg-[#FAFAFA] text-xs text-[#666666]">
-              채팅으로 실행된 기능: {activeFeature}
-            </div>
-            <div className="max-h-[70vh] overflow-y-auto">{featureComponent}</div>
-          </div>
-        ) : null}
-      </div>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmitMessage(inputValue);
-        }}
-        className="p-4 border-t border-[#E5E5E5] bg-white"
-      >
-        <div className="relative">
-          {showQuickCommands && (
-            <div className="absolute left-0 right-0 bottom-[56px] rounded-xl border border-[#E5E5E5] bg-white shadow-lg p-2 z-20">
-              {QUICK_COMMANDS.map((command) => (
-                <button
-                  key={command.id}
-                  type="button"
-                  className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-pink-50 hover:text-pink-500 transition"
-                  onClick={() => handleSubmitMessage(command.label)}
-                >
-                  {command.label}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmitMessage(inputValue);
+            }}
+            className="p-4 border-t border-[#E5E5E5] bg-white"
+          >
+            <div className="relative">
+              {showQuickCommands && (
+                <div className="absolute left-0 right-0 bottom-[56px] rounded-xl border border-[#E5E5E5] bg-white shadow-lg p-2 z-20">
+                  {QUICK_COMMANDS.map((command) => (
+                    <button
+                      key={command.id}
+                      type="button"
+                      className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-700 hover:bg-pink-50 hover:text-pink-500 transition"
+                      onClick={() => handleSubmitMessage(command.label)}
+                    >
+                      {command.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="rounded-2xl border border-[#E5E5E5] px-3 py-2 flex items-center gap-2">
+                <input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder={t('aicoach.placeholder')}
+                  disabled={coachLoading}
+                  className="flex-1 text-sm outline-none bg-transparent"
+                />
+                <button type="submit" disabled={coachLoading} className="w-9 h-9 rounded-xl bg-[#FF1F8E] text-white grid place-items-center disabled:opacity-60">
+                  <Send size={16} />
                 </button>
+              </div>
+            </div>
+          </form>
+        </>
+      ) : null}
+
+      {activeTab === 'report' ? (
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#F5F5F7]">
+          {lastReportCard ? (
+            <div className="rounded-2xl border border-[#E5E5E5] bg-white p-4 space-y-2">
+              <div className="rounded-lg border border-[#E5E5E5] bg-[#FAFAFA] p-2 space-y-2">
+                <div className="flex gap-2">
+                  {[
+                    { id: 'daily', label: '일간' },
+                    { id: 'weekly', label: '주간' },
+                    { id: 'monthly', label: '월간' },
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setReportPeriod(item.id)}
+                      className={`rounded-md px-2 py-1 text-[11px] border ${
+                        reportPeriod === item.id ? 'bg-[#FF1F8E] text-white border-[#FF1F8E]' : 'bg-white text-[#666666] border-[#E5E5E5]'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="date"
+                    value={reportDate}
+                    onChange={(e) => setReportDate(e.target.value)}
+                    className="rounded-md border border-[#E5E5E5] px-2 py-1 text-[11px]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => refreshReportCard('all', reportPeriod, reportDate)}
+                    className="rounded-md border border-[#E5E5E5] px-2 py-1 text-[11px] text-[#555555]"
+                  >
+                    기간 리포트 갱신
+                  </button>
+                </div>
+              </div>
+              <p className="text-sm font-semibold text-[#111111]">{lastReportCard.title}</p>
+              {lastReportCard.body.map((line, idx) => (
+                <p key={`${idx}-${line.slice(0, 12)}`} className="text-xs text-[#666666]">- {line}</p>
               ))}
+              {lastReportCard.periodSummary ? (
+                <div className="rounded-lg bg-[#F9FAFF] border border-[#E5E5E5] p-2 space-y-1">
+                  <p className="text-xs font-semibold text-[#111111]">{lastReportCard.periodSummary.title}</p>
+                  <p className="text-[11px] text-[#666666]">
+                    세션 {lastReportCard.periodSummary.stats?.sessions ?? 0}회 · 평균 {lastReportCard.periodSummary.stats?.average ?? '—'} · 최고{' '}
+                    {lastReportCard.periodSummary.stats?.best ?? '—'} · 최저 {lastReportCard.periodSummary.stats?.worst ?? '—'}
+                  </p>
+                  {lastReportCard.periodSummary.lines.map((line, idx) => (
+                    <p key={`${idx}-${line.slice(0, 12)}`} className="text-[11px] text-[#666666]">- {line}</p>
+                  ))}
+                </div>
+              ) : null}
+              {lastReportCard.trend?.length ? (
+                <div className="rounded-lg bg-[#F7F7F8] border border-[#E5E5E5] p-2 space-y-1">
+                  <p className="text-xs font-semibold text-[#111111]">최근 추이</p>
+                  {lastReportCard.trend.map((line, idx) => (
+                    <p key={`${idx}-${line.slice(0, 12)}`} className="text-[11px] text-[#666666]">- {line}</p>
+                  ))}
+                </div>
+              ) : null}
+              {lastReportCard.growth ? (
+                <div className="rounded-lg bg-[#F8F7FF] border border-[#E5E5E5] p-2 space-y-1">
+                  <p className="text-xs font-semibold text-[#111111]">성장 분석 (어제/지난주 대비)</p>
+                  {lastReportCard.growth.lines.map((line, idx) => (
+                    <p key={`${idx}-${line.slice(0, 12)}`} className="text-[11px] text-[#666666]">- {line}</p>
+                  ))}
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div className="rounded-md border border-[#E5E5E5] bg-white px-2 py-1">
+                      <p className="text-[10px] text-[#888888]">목표 점수</p>
+                      <p className="text-xs font-semibold text-[#111111]">{lastReportCard.growth.achievement?.targetScore ?? '—'}</p>
+                    </div>
+                    <div className="rounded-md border border-[#E5E5E5] bg-white px-2 py-1">
+                      <p className="text-[10px] text-[#888888]">오늘 달성률</p>
+                      <p className="text-xs font-semibold text-[#111111]">
+                        {lastReportCard.growth.achievement?.todayAchievementRate == null
+                          ? '—'
+                          : `${lastReportCard.growth.achievement.todayAchievementRate}%`}
+                      </p>
+                    </div>
+                    <div className="rounded-md border border-[#E5E5E5] bg-white px-2 py-1">
+                      <p className="text-[10px] text-[#888888]">주간 진행률</p>
+                      <p className="text-xs font-semibold text-[#111111]">
+                        {lastReportCard.growth.achievement?.weeklyGoalProgress == null
+                          ? '—'
+                          : `${lastReportCard.growth.achievement.weeklyGoalProgress}%`}
+                      </p>
+                    </div>
+                  </div>
+                  {lastReportCard.growth.routines?.length ? (
+                    <div className="rounded-md border border-[#E5E5E5] bg-white p-2 mt-2 space-y-1">
+                      <p className="text-[11px] font-semibold text-[#111111]">추천 루틴 / 연습 추천</p>
+                      {lastReportCard.growth.routines.map((routine, idx) => (
+                        <div key={`${idx}-${routine.label.slice(0, 12)}`} className="flex items-start gap-2">
+                          <p className="flex-1 text-[11px] text-[#666666]">- {routine.label}</p>
+                          {routine.feature !== 'none' ? (
+                            <button
+                              type="button"
+                              onClick={() => runRoutine(routine)}
+                              className="shrink-0 rounded-md border border-[#FF1F8E] px-2 py-0.5 text-[10px] text-[#FF1F8E] hover:bg-[#FF1F8E12]"
+                            >
+                              실행
+                            </button>
+                          ) : null}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+              {lastReportCard.jsonText ? (
+                <details className="rounded-lg border border-[#E5E5E5] bg-[#FCFCFD] p-2">
+                  <summary className="cursor-pointer text-xs font-semibold text-[#111111]">상세 JSON 리포트</summary>
+                  <pre className="mt-2 text-[10px] leading-4 text-[#555555] overflow-x-auto">{lastReportCard.jsonText}</pre>
+                </details>
+              ) : null}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 text-sm text-[#666666]">
+              아직 생성된 리포트가 없습니다. 먼저 댄스/보컬/한국어를 연습해 주세요.
             </div>
           )}
-          <div className="rounded-2xl border border-[#E5E5E5] px-3 py-2 flex items-center gap-2">
-            <input
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder={t('aicoach.placeholder')}
-              className="flex-1 text-sm outline-none bg-transparent"
-            />
-            <button type="submit" className="w-9 h-9 rounded-xl bg-[#FF1F8E] text-white grid place-items-center">
-              <Send size={16} />
-            </button>
-          </div>
         </div>
-      </form>
+      ) : null}
+
+      {activeTab !== 'chat' && activeTab !== 'report' ? (
+        <div className="flex-1 overflow-y-auto bg-[#F5F5F7]">{featureComponent}</div>
+      ) : null}
+      <nav className="border-t border-[#E5E5E5] bg-white">
+        <div className="grid grid-cols-5 gap-1 p-2">
+          {BOTTOM_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => handleBottomTab(tab.id)}
+              className={`rounded-lg py-2 text-[11px] font-semibold ${
+                activeTab === tab.id ? 'bg-[#FF1F8E] text-white' : 'bg-[#F5F5F7] text-[#666666]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 }

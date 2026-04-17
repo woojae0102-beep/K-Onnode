@@ -228,7 +228,7 @@ export default function App() {
   const { t } = useTranslation();
   const coachMode = useSettingsStore((state) => state.settings?.coachMode || 'single');
   const [user, setUser] = useState(null);
-  const [viewMode, setViewMode] = useState('hub');
+  const [viewMode, setViewMode] = useState('desktop');
   const [sessionId, setSessionId] = useState('');
   const [sessionData, setSessionData] = useState(null);
   const [activeMenu, setActiveMenu] = useState('ai');
@@ -270,11 +270,8 @@ export default function App() {
       setUser(u);
       const params = new URLSearchParams(window.location.search);
       const sId = params.get('session');
-      if (sId) {
-        setSessionId(sId.toUpperCase());
-        if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) setViewMode('mobile');
-        else setViewMode('desktop');
-      }
+      if (sId) setSessionId(sId.toUpperCase());
+      setViewMode('desktop');
     });
     return () => unsubscribe();
   }, []);
