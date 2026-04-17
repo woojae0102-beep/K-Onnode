@@ -1,0 +1,351 @@
+{
+  "settings": {
+    "title": "設定",
+    "subtitle": "ONNODE AI COACH をあなた向けに設定",
+    "sections": {
+      "profile": "プロフィール & アカウント",
+      "aiCoach": "AIコーチ設定",
+      "recording": "録画 & 分析",
+      "business": "ビジネス & アカウント連携",
+      "notifications": "通知 & ルーティン",
+      "app": "アプリ & プライバシー"
+    },
+    "myProfile": "マイプロフィール",
+    "trackSelection": "トラック選択",
+    "myStats": "学習統計",
+    "coachLanguageTone": "コーチ言語 & トーン",
+    "feedbackSensitivity": "フィードバック感度",
+    "coachMode": {
+      "title": "コーチモード",
+      "modeBadge": "AIコーチモード",
+      "options": {
+        "single": "シングルコーチ",
+        "multi": "マルチコーチ",
+        "free": "自由練習"
+      }
+    },
+    "micCamera": "マイク & カメラ",
+    "videoStorage": "動画保存管理",
+    "exportReport": "分析レポート出力",
+    "subscription": {
+      "premiumPlan": "Premium Plan",
+      "premium": "Premium Plan",
+      "freePlan": "Free Plan",
+      "free": "Free Plan",
+      "active": "Active",
+      "nextBilling": "次回請求",
+      "changePayment": "支払い方法変更",
+      "changePlan": "プラン変更",
+      "cancel": "購読を解約",
+      "upgrade": "プレミアムへアップグレード",
+      "freeDesc": "3曲まで · 基本フィードバックのみ",
+      "paddleNotReady": "Paddle 決済の準備ができていません",
+      "paymentScreenFallback": "PaymentMethodScreen 連携予定",
+      "upgradeModalTitle": "プレミアム特典",
+      "cancelConfirmTitle": "購読を解約しますか？",
+      "cancelConfirmDesc": "次回請求日以降、プレミアム機能は無効になります。",
+      "premiumFeatures": {
+        "songs": "無制限の曲選択",
+        "report": "高精度 AI 分析レポート (PDF)",
+        "multiCoach": "マルチコーチモード",
+        "video": "練習動画の無制限保存",
+        "ranking": "グローバルランキング参加"
+      }
+    },
+    "sns": {
+      "title": "SNS連携",
+      "connect": "連携する",
+      "connected": "連携済み",
+      "disconnect": "連携解除",
+      "disconnected": "未連携",
+      "exportHint": "動画エクスポート可能プラットフォーム",
+      "platforms": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "twitter": "Twitter/X"
+      }
+    },
+    "language": {
+      "title": "言語設定",
+      "comingSoon": "Coming Soon"
+    },
+    "notifications": {
+      "practiceReminder": "練習リマインダー"
+    },
+    "routine": {
+      "title": "AI Weekly Plan",
+      "recommended": "RECOMMENDED",
+      "generate": "AI 推薦ルーティンを生成",
+      "morning": "朝",
+      "evening": "夜",
+      "empty": "空き",
+      "slotPrompt": "このスロットの内容を入力してください"
+    },
+    "privacy": {
+      "title": "プライバシー & データ管理",
+      "deleteData": "データを削除",
+      "withdraw": "アカウント退会",
+      "deleteConfirmTitle": "データを削除しますか？",
+      "deleteConfirmDesc": "削除したデータは復元できません。",
+      "withdrawConfirmTitle": "アカウントを退会しますか？",
+      "withdrawConfirmDesc": "退会すると学習履歴がすべて削除されます。"
+    },
+    "help": {
+      "title": "ヘルプ & お問い合わせ",
+      "faq": "FAQ",
+      "contact": "1:1 お問い合わせ"
+    },
+    "record": {
+      "micSensitivity": "マイク感度",
+      "noiseFilter": "背景ノイズフィルター",
+      "permissionCheck": "権限確認",
+      "autoSave": "自動保存"
+    },
+    "common": {
+      "on": "ON",
+      "off": "OFF",
+      "close": "閉じる"
+    },
+    "report": {
+      "title": "ONNODE レポート"
+    },
+    "navigation": {
+      "profileEdit": "ProfileEditScreen 連携予定",
+      "statsDetail": "StatsDetailScreen 連携予定",
+      "videoLibrary": "VideoLibraryScreen 連携予定"
+    },
+    "track": {
+      "dance": "ダンス",
+      "vocal": "ボーカル",
+      "korean": "韓国語"
+    },
+    "tone": {
+      "friendly": "親しみ",
+      "expert": "専門家"
+    },
+    "feedbackLabel": {
+      "gentle": "やさしく",
+      "normal": "標準",
+      "strict": "厳しく"
+    },
+    "cameraDefault": {
+      "front": "前面",
+      "back": "背面"
+    },
+    "storageDuration": {
+      "days7": "7日",
+      "days30": "30日",
+      "unlimited": "無制限"
+    },
+    "reportFormat": {
+      "pdf": "PDF",
+      "image": "Image"
+    },
+    "buttons": {
+      "saveVideos": "保存動画を見る",
+      "export": "エクスポート"
+    },
+    "labels": {
+      "usage": "使用中",
+      "sessions": "セッション",
+      "minutes": "練習分",
+      "avgScore": "平均 AI スコア",
+      "maxTracksNotice": "最大 3 トラックまで有効化できます",
+      "permissionGranted": "権限が許可されました",
+      "permissionDenied": "権限確認が必要です"
+    },
+    "days": {
+      "mon": "月",
+      "tue": "火",
+      "wed": "水",
+      "thu": "木",
+      "fri": "金",
+      "sat": "土",
+      "sun": "日"
+    },
+    "toast": {
+      "upgradeSuccess": "プレミアムへアップグレードされました",
+      "cancelSuccess": "購読が解約されました",
+      "snsConnected": "SNS 連携が完了しました",
+      "snsDisconnected": "SNS 連携を解除しました",
+      "requestFailed": "リクエスト処理に失敗しました",
+      "exportSuccess": "レポートを出力しました",
+      "planGenerated": "週間ルーティンを生成しました",
+      "dataDeleted": "データ削除リクエストが完了しました"
+    }
+  },
+  "nav": {
+    "mypage": "MY PAGE",
+    "discover": "DISCOVER",
+    "community": "COMMUNITY",
+    "dance": "DANCE",
+    "vocal": "VOCAL",
+    "korean": "KOREAN AI",
+    "aicoach": "AI COACH",
+    "notifications": "NOTIFICATIONS",
+    "settings": "SETTINGS"
+  },
+  "views": {
+    "mypage": "MY PAGE",
+    "aicoach": "AI COACH"
+  },
+  "common": {
+    "more": "もっと見る"
+  },
+  "aicoach": {
+    "loading": "AIコーチが返信を生成中です...",
+    "placeholder": "メッセージを送信..."
+  },
+  "mypage": {
+    "nickname": "ONNODE STAR",
+    "joinedAt": "登録日: 2025.09.10",
+    "levelText": "Lv.12 · Rising Star",
+    "today": "今日の練習",
+    "sessions": "セッション",
+    "totalTime": "合計時間",
+    "avgScore": "平均スコア",
+    "streak": "連続日数",
+    "startPractice": "練習を開始",
+    "growth": "成長グラフ",
+    "feedbackHistory": "AIフィードバック履歴",
+    "feedbackSummary": "テンポは安定。腕の可動域を少し広げましょう。",
+    "savedVideos": "保存した動画",
+    "videoMenu": "共有 | 削除",
+    "goalProgress": "目標進捗",
+    "goalWeekly": "今週5回練習",
+    "goalVocal": "ボーカル呼吸4回",
+    "goalKorean": "韓国語文10個",
+    "addGoal": "目標追加"
+  },
+  "discover": {
+    "tabs": {
+      "all": "全体",
+      "dance": "ダンス",
+      "vocal": "ボーカル",
+      "korean": "韓国語",
+      "challenge": "チャレンジ"
+    },
+    "heroTitle": "おすすめコンテンツ",
+    "practiceNow": "今すぐ練習",
+    "popularDance": "人気ダンス",
+    "startPractice": "練習する",
+    "popularVocal": "人気曲",
+    "singNow": "歌う",
+    "koreanContent": "韓国語学習コンテンツ",
+    "challenges": "チャレンジ",
+    "join": "参加する",
+    "trendingVideos": "トレンド動画",
+    "openPlayer": "開く",
+    "rowItem": "コンテンツ",
+    "listItem": "レッスン"
+  },
+  "community": {
+    "search": "会話を検索...",
+    "tabs": {
+      "dm": "DM",
+      "group": "グループ"
+    },
+    "newChat": "新しい会話",
+    "newChatPlaceholder": "ニックネームまたはグループ名",
+    "create": "作成",
+    "empty": "会話を選択してください",
+    "online": "オンライン",
+    "offline": "オフライン",
+    "uploading": "アップロード中...",
+    "messagePlaceholder": "メッセージを送信...",
+    "attach": {
+      "image": "写真を選択",
+      "video": "動画を選択",
+      "camera": "カメラ撮影"
+    }
+  },
+  "dance": {
+    "youtubePlaceholder": "YouTube URL を入力",
+    "load": "読み込み",
+    "emptyVideo": "動画URLを入力してください",
+    "speed": "再生速度",
+    "mirror": "ミラーモード",
+    "difficulty": "AI難易度",
+    "levels": {
+      "beginner": "入門",
+      "elementary": "初級",
+      "intermediate": "中級",
+      "advanced": "上級",
+      "pro": "プロ"
+    },
+    "cameraLive": "カメラライブ",
+    "liveFeedback": "リアルタイム姿勢フィードバック",
+    "summary": {
+      "total": "総合スコア",
+      "best": "ベストタイミング",
+      "needs": "改善ポイント"
+    },
+    "retry": "もう一度",
+    "save": "保存",
+    "share": "コミュニティ共有"
+  },
+  "vocal": {
+    "searchSong": "曲名またはアーティスト検索",
+    "tabs": {
+      "myUpload": "マイアップロード",
+      "popular": "人気曲",
+      "discover": "Discover"
+    },
+    "record": "録音",
+    "stop": "停止",
+    "liveScore": "リアルタイムスコア",
+    "line1": "今日もステージで輝こう",
+    "line2": "あなたと私のリズムが重なる",
+    "line3": "息を整えてまた始めよう",
+    "line4": "最後まで正確に歌おう",
+    "result": "録音結果",
+    "pitch": "音程",
+    "rhythm": "リズム",
+    "voice": "発声",
+    "emotion": "感情",
+    "aiComment": "呼吸は安定しています。サビの高音で共鳴位置を少し上げてみましょう。",
+    "retry": "もう一度歌う",
+    "save": "保存",
+    "share": "友達に共有"
+  },
+  "korean": {
+    "modes": {
+      "pronunciation": "発音練習",
+      "follow": "文をまねる",
+      "correction": "AI発音矯正",
+      "lyricsVocab": "歌詞ベース学習"
+    },
+    "sampleSentence": "今日も正確な発音とリズムで練習しましょう。",
+    "toggleRomanized": "ローマ字 表示/非表示",
+    "toggleTranslation": "翻訳 表示/非表示",
+    "record": "録音",
+    "syllableFeedback": "音節別フィードバックがここに表示されます。",
+    "followTitle": "文をまねるモード",
+    "lineLabel": "{{idx}}番の文",
+    "nativePlay": "ネイティブ再生",
+    "correctionTitle": "AI 発音矯正",
+    "correctionUser": "今日の天気はほんとうにジョアヨ。",
+    "correctionAI": "ジョアヨ -> チョアヨ。中間母音をもう少し明確に。",
+    "vocabTitle": "歌詞語彙学習"
+  },
+  "notifications": {
+    "filters": {
+      "all": "全体",
+      "aicoach": "AIコーチ",
+      "challenge": "チャレンジ",
+      "community": "コミュニティ"
+    },
+    "markAllRead": "すべて既読",
+    "aiTitle": "🔥 こんにちは ONNODE STAR!",
+    "aiMessage": "今日はまだボーカル練習していません。10分だけ一緒にやりますか？",
+    "practiceNow": "今すぐ練習",
+    "goalTitle": "🎉 目標達成!",
+    "goalMessage": "今週5回の練習を完了しました！",
+    "nextGoal": "次の目標を設定",
+    "recommendTitle": "🎵 新着おすすめ",
+    "recommendMessage": "現在のレベルにぴったりの難易度です。",
+    "start": "練習する",
+    "changeSettings": "通知設定を変更 →"
+  }
+}

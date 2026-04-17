@@ -17,6 +17,10 @@ import {
   Bell,
   X,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import SettingsScreen from './screens/SettingsScreen';
+import { useSettingsStore } from './store/settingsSlice';
+import Layout from './components/Layout';
 
 function readFirebaseConfig() {
   const fromGlobal =
@@ -221,6 +225,8 @@ async function buildGeminiCoachReply({ input, sessionData, history }) {
 }
 
 export default function App() {
+  const { t } = useTranslation();
+  const coachMode = useSettingsStore((state) => state.settings?.coachMode || 'single');
   const [user, setUser] = useState(null);
   const [viewMode, setViewMode] = useState('hub');
   const [sessionId, setSessionId] = useState('');
@@ -238,6 +244,8 @@ export default function App() {
   const [newMessage, setNewMessage] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const mergedSessionData = mergeSessionData(sessionData || {}, sessionDraft || {});
+  const coachModeLabel = t(`settings.coachMode.options.${coachMode}`, { defaultValue: '단일 코치' });
+  const coachModeSuffix = t('settings.coachMode.modeBadge', { defaultValue: 'AI 코치 모드' });
 
   if (firebaseInitError) {
     return <FirebaseSetupError message={firebaseInitError} />;
@@ -382,6 +390,22 @@ export default function App() {
     return <MobileController sessionId={sessionId} sessionData={mergedSessionData} db={db} onReset={() => setViewMode('hub')} />;
   }
 
+  if (viewMode === 'desktop') {
+    return (
+      <Layout
+        user={user}
+        db={db}
+        appId={appId}
+        sessionData={mergedSessionData}
+        aiMessages={aiMessages}
+        aiLoading={aiLoading}
+        newMessage={newMessage}
+        setNewMessage={setNewMessage}
+        sendMessage={sendMessage}
+      />
+    );
+  }
+
   return (
     <div className="flex h-screen bg-[#f3f4f6] text-slate-900 font-sans overflow-hidden border-t-4 border-[#FF1493]">
       <div className="w-[72px] bg-[#ebebed] flex flex-col items-center py-6 gap-6 border-r border-slate-200 shrink-0">
@@ -397,83 +421,95 @@ export default function App() {
         <GNBIcon icon={Languages} active={activeMenu === 'korean'} onClick={() => runModule('korean')} />
         <div className="mt-auto flex flex-col gap-6">
           <GNBIcon icon={Bell} />
-          <GNBIcon icon={Settings} onClick={() => setActiveMenu('settings')} />
+          <GNBIcon icon={Settings} active={activeMenu === 'settings'} onClick={() => setActiveMenu('settings')} />
         </div>
       </div>
 
       <div className="flex-1 flex bg-white relative transition-all duration-500">
-        <div className={`flex flex-col h-full border-r border-slate-100 transition-all duration-500 ${mergedSessionData?.activeTraining ? 'w-[45%]' : 'flex-1'}`}>
+        <div
+          className={`flex flex-col h-full border-r border-slate-100 transition-all duration-500 ${
+            mergedSessionData?.activeTraining && activeMenu !== 'settings' ? 'w-[45%]' : 'flex-1'
+          }`}
+        >
           <div className="h-16 px-8 flex items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
             <div className="flex items-center gap-3">
               <span className="font-bold">ONNODE AI COACH</span>
               <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500 uppercase font-black tracking-tighter">ID: {sessionId}</span>
             </div>
-            <p className="text-xs text-slate-500 font-semibold">단일 AI 코치 모드</p>
+            <p className="text-xs text-slate-500 font-semibold">
+              {coachModeLabel} {coachModeSuffix}
+            </p>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-[#f9fafb] scrollbar-hide">
-            {aiMessages.map((msg) => (
-              <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className="w-10 h-10 bg-slate-200 rounded-2xl flex-shrink-0 shadow-sm overflow-hidden border border-white">
-                  <User size={20} className="m-2.5 text-slate-400" />
-                </div>
-                <div className={`max-w-[75%] space-y-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                  <div className="flex items-center gap-2 px-1">
-                    <span className="text-[11px] font-bold text-slate-600 uppercase">{msg.role === 'user' ? 'YOU' : 'ONNODE AI'}</span>
-                    <span className="text-[9px] text-slate-400">
-                      {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                    </span>
+          {activeMenu === 'settings' ? (
+            <SettingsScreen user={user} db={db} appId={appId} sessionData={mergedSessionData} />
+          ) : (
+            <>
+              <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-[#f9fafb] scrollbar-hide">
+                {aiMessages.map((msg) => (
+                  <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <div className="w-10 h-10 bg-slate-200 rounded-2xl flex-shrink-0 shadow-sm overflow-hidden border border-white">
+                      <User size={20} className="m-2.5 text-slate-400" />
+                    </div>
+                    <div className={`max-w-[75%] space-y-1 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                      <div className="flex items-center gap-2 px-1">
+                        <span className="text-[11px] font-bold text-slate-600 uppercase">{msg.role === 'user' ? 'YOU' : 'ONNODE AI'}</span>
+                        <span className="text-[9px] text-slate-400">
+                          {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                        </span>
+                      </div>
+                      <div
+                        className={`px-5 py-3 rounded-[1.2rem] text-sm font-medium shadow-sm transition-all ${
+                          msg.role === 'user' ? 'bg-[#FF1493] text-white rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    className={`px-5 py-3 rounded-[1.2rem] text-sm font-medium shadow-sm transition-all ${
-                      msg.role === 'user' ? 'bg-[#FF1493] text-white rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none border border-slate-100'
-                    }`}
+                ))}
+                {aiLoading && (
+                  <div className="flex gap-3">
+                    <div className="w-10 h-10 bg-slate-200 rounded-2xl flex-shrink-0 shadow-sm overflow-hidden border border-white">
+                      <User size={20} className="m-2.5 text-slate-400" />
+                    </div>
+                    <div className="max-w-[75%]">
+                      <div className="px-5 py-3 rounded-[1.2rem] text-sm font-medium bg-white text-slate-500 rounded-tl-none border border-slate-100">
+                        Gemini 코치가 답변을 생성 중입니다...
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <form onSubmit={sendMessage} className="p-6 bg-white border-t border-slate-100">
+                <div className="bg-slate-50 p-2 pl-6 rounded-2xl border border-slate-200 flex items-center gap-3 focus-within:border-pink-500/30 transition-all shadow-inner">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="AI 코치에게 질문하기..."
+                    className="flex-1 bg-transparent outline-none text-sm font-medium py-2 px-1"
+                  />
+                  <button
+                    type="submit"
+                    disabled={aiLoading}
+                    className="w-10 h-10 bg-[#FF1493] rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-105 active:scale-95 transition"
                   >
-                    {msg.text}
-                  </div>
+                    <Send size={18} />
+                  </button>
                 </div>
-              </div>
-            ))}
-            {aiLoading && (
-              <div className="flex gap-3">
-                <div className="w-10 h-10 bg-slate-200 rounded-2xl flex-shrink-0 shadow-sm overflow-hidden border border-white">
-                  <User size={20} className="m-2.5 text-slate-400" />
-                </div>
-                <div className="max-w-[75%]">
-                  <div className="px-5 py-3 rounded-[1.2rem] text-sm font-medium bg-white text-slate-500 rounded-tl-none border border-slate-100">
-                    Gemini 코치가 답변을 생성 중입니다...
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <form onSubmit={sendMessage} className="p-6 bg-white border-t border-slate-100">
-            <div className="bg-slate-50 p-2 pl-6 rounded-2xl border border-slate-200 flex items-center gap-3 focus-within:border-pink-500/30 transition-all shadow-inner">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="AI 코치에게 질문하기..."
-                className="flex-1 bg-transparent outline-none text-sm font-medium py-2 px-1"
-              />
-              <button
-                type="submit"
-                disabled={aiLoading}
-                className="w-10 h-10 bg-[#FF1493] rounded-xl flex items-center justify-center text-white shadow-lg hover:scale-105 active:scale-95 transition"
-              >
-                <Send size={18} />
-              </button>
-            </div>
-          </form>
+              </form>
+            </>
+          )}
         </div>
 
         <div
           className={`bg-[#020617] h-full transition-all duration-700 ease-in-out relative flex flex-col ${
-            mergedSessionData?.activeTraining ? 'flex-1 translate-x-0' : 'w-0 translate-x-full absolute right-0'
+            mergedSessionData?.activeTraining && activeMenu !== 'settings' ? 'flex-1 translate-x-0' : 'w-0 translate-x-full absolute right-0'
           }`}
         >
-          {mergedSessionData?.activeTraining && (
+          {mergedSessionData?.activeTraining && activeMenu !== 'settings' && (
             <div className="h-full flex flex-col p-10 animate-in fade-in slide-in-from-right duration-700">
               <div className="flex justify-between items-start mb-10">
                 <div className="space-y-1">
@@ -530,11 +566,11 @@ function FirebaseSetupError({ message }) {
 function GNBIcon({ icon: Icon, active, onClick, dot }) {
   return (
     <div className="relative group cursor-pointer flex justify-center w-full" onClick={onClick}>
-      <div className={`p-4 rounded-2xl transition-all duration-300 ${active ? 'bg-white text-[#FF1493] shadow-md' : 'text-slate-400 hover:text-slate-900'}`}>
+      <div className={`p-4 rounded-2xl transition-all duration-300 ${active ? 'bg-white text-[#FF1F8E] shadow-md' : 'text-slate-400 hover:text-slate-900'}`}>
         <Icon size={26} />
       </div>
       {dot && !active && <div className="absolute top-3 right-4 w-2 h-2 bg-[#FF1493] rounded-full border-2 border-[#ebebed]" />}
-      {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#FF1493] rounded-r-full" />}
+      {active && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-[#FF1F8E] rounded-r-full" />}
     </div>
   );
 }

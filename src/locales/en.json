@@ -1,0 +1,351 @@
+{
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your ONNODE AI COACH experience",
+    "sections": {
+      "profile": "Profile & Account",
+      "aiCoach": "AI Coach Settings",
+      "recording": "Recording & Analysis",
+      "business": "Business & Account Integration",
+      "notifications": "Notifications & Routine",
+      "app": "App & Privacy"
+    },
+    "myProfile": "My Profile",
+    "trackSelection": "Track Selection",
+    "myStats": "My Stats",
+    "coachLanguageTone": "Coach Language & Tone",
+    "feedbackSensitivity": "Feedback Sensitivity",
+    "coachMode": {
+      "title": "Coach Mode",
+      "modeBadge": "AI Coach Mode",
+      "options": {
+        "single": "Single Coach",
+        "multi": "Multi Coach",
+        "free": "Free Practice"
+      }
+    },
+    "micCamera": "Mic & Camera",
+    "videoStorage": "Video Storage",
+    "exportReport": "Export Report",
+    "subscription": {
+      "premiumPlan": "Premium Plan",
+      "premium": "Premium Plan",
+      "freePlan": "Free Plan",
+      "free": "Free Plan",
+      "active": "Active",
+      "nextBilling": "Next billing",
+      "changePayment": "Change payment method",
+      "changePlan": "Change plan",
+      "cancel": "Cancel subscription",
+      "upgrade": "Upgrade to Premium",
+      "freeDesc": "3 songs limit · basic feedback only",
+      "paddleNotReady": "Paddle checkout is not ready yet",
+      "paymentScreenFallback": "PaymentMethodScreen integration pending",
+      "upgradeModalTitle": "Premium Features",
+      "cancelConfirmTitle": "Cancel your subscription?",
+      "cancelConfirmDesc": "Premium access will end on your next billing cycle.",
+      "premiumFeatures": {
+        "songs": "Unlimited song selection",
+        "report": "Detailed AI analysis report (PDF)",
+        "multiCoach": "Multi coach mode",
+        "video": "Unlimited practice video storage",
+        "ranking": "Global ranking participation"
+      }
+    },
+    "sns": {
+      "title": "SNS Account Integration",
+      "connect": "Connect",
+      "connected": "Connected",
+      "disconnect": "Disconnect",
+      "disconnected": "Not connected",
+      "exportHint": "Video export available platforms",
+      "platforms": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "twitter": "Twitter/X"
+      }
+    },
+    "language": {
+      "title": "Language",
+      "comingSoon": "Coming Soon"
+    },
+    "notifications": {
+      "practiceReminder": "Practice Reminder"
+    },
+    "routine": {
+      "title": "AI Weekly Plan",
+      "recommended": "RECOMMENDED",
+      "generate": "Generate AI weekly routine",
+      "morning": "Morning",
+      "evening": "Evening",
+      "empty": "Empty",
+      "slotPrompt": "Enter routine content for this slot"
+    },
+    "privacy": {
+      "title": "Privacy & Data",
+      "deleteData": "Delete my data",
+      "withdraw": "Delete account",
+      "deleteConfirmTitle": "Delete your data?",
+      "deleteConfirmDesc": "Deleted data cannot be recovered.",
+      "withdrawConfirmTitle": "Delete this account?",
+      "withdrawConfirmDesc": "All learning history will be removed."
+    },
+    "help": {
+      "title": "Help & Contact",
+      "faq": "FAQ",
+      "contact": "1:1 Support"
+    },
+    "record": {
+      "micSensitivity": "Mic sensitivity",
+      "noiseFilter": "Background noise filter",
+      "permissionCheck": "Permission check",
+      "autoSave": "Auto-save"
+    },
+    "common": {
+      "on": "ON",
+      "off": "OFF",
+      "close": "Close"
+    },
+    "report": {
+      "title": "ONNODE Report"
+    },
+    "navigation": {
+      "profileEdit": "ProfileEditScreen integration pending",
+      "statsDetail": "StatsDetailScreen integration pending",
+      "videoLibrary": "VideoLibraryScreen integration pending"
+    },
+    "track": {
+      "dance": "Dance",
+      "vocal": "Vocal",
+      "korean": "Korean"
+    },
+    "tone": {
+      "friendly": "Friendly",
+      "expert": "Expert"
+    },
+    "feedbackLabel": {
+      "gentle": "Gentle",
+      "normal": "Normal",
+      "strict": "Strict"
+    },
+    "cameraDefault": {
+      "front": "Front",
+      "back": "Back"
+    },
+    "storageDuration": {
+      "days7": "7 days",
+      "days30": "30 days",
+      "unlimited": "Unlimited"
+    },
+    "reportFormat": {
+      "pdf": "PDF",
+      "image": "Image"
+    },
+    "buttons": {
+      "saveVideos": "View saved videos",
+      "export": "Export"
+    },
+    "labels": {
+      "usage": "Usage",
+      "sessions": "Sessions",
+      "minutes": "Practice min",
+      "avgScore": "Avg AI score",
+      "maxTracksNotice": "You can activate up to 3 tracks",
+      "permissionGranted": "Permission granted",
+      "permissionDenied": "Permission check required"
+    },
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "toast": {
+      "upgradeSuccess": "Premium upgrade applied",
+      "cancelSuccess": "Subscription canceled",
+      "snsConnected": "SNS connected successfully",
+      "snsDisconnected": "SNS disconnected",
+      "requestFailed": "Request failed",
+      "exportSuccess": "Report exported",
+      "planGenerated": "Weekly plan generated",
+      "dataDeleted": "Data deletion request completed"
+    }
+  },
+  "nav": {
+    "mypage": "MY PAGE",
+    "discover": "DISCOVER",
+    "community": "COMMUNITY",
+    "dance": "DANCE",
+    "vocal": "VOCAL",
+    "korean": "KOREAN AI",
+    "aicoach": "AI COACH",
+    "notifications": "NOTIFICATIONS",
+    "settings": "SETTINGS"
+  },
+  "views": {
+    "mypage": "MY PAGE",
+    "aicoach": "AI COACH"
+  },
+  "common": {
+    "more": "More"
+  },
+  "aicoach": {
+    "loading": "AI coach is generating a reply...",
+    "placeholder": "Send a message..."
+  },
+  "mypage": {
+    "nickname": "ONNODE STAR",
+    "joinedAt": "Joined: 2025.09.10",
+    "levelText": "Lv.12 · Rising Star",
+    "today": "Today",
+    "sessions": "Sessions",
+    "totalTime": "Total Time",
+    "avgScore": "Avg Score",
+    "streak": "Streak",
+    "startPractice": "Start Practice",
+    "growth": "Growth Graph",
+    "feedbackHistory": "AI Feedback History",
+    "feedbackSummary": "Tempo is stable. Arm extension needs improvement.",
+    "savedVideos": "Saved Videos",
+    "videoMenu": "Share | Delete",
+    "goalProgress": "Goal Progress",
+    "goalWeekly": "Practice 5 times this week",
+    "goalVocal": "Vocal breath 4 times",
+    "goalKorean": "10 Korean sentences",
+    "addGoal": "Add Goal"
+  },
+  "discover": {
+    "tabs": {
+      "all": "All",
+      "dance": "Dance",
+      "vocal": "Vocal",
+      "korean": "Korean",
+      "challenge": "Challenge"
+    },
+    "heroTitle": "Featured for You",
+    "practiceNow": "Practice Now",
+    "popularDance": "Popular Choreo",
+    "startPractice": "Practice",
+    "popularVocal": "Popular Songs",
+    "singNow": "Sing",
+    "koreanContent": "Korean Learning",
+    "challenges": "Challenges",
+    "join": "Join",
+    "trendingVideos": "Trending Videos",
+    "openPlayer": "Open",
+    "rowItem": "Content",
+    "listItem": "Lesson"
+  },
+  "community": {
+    "search": "Search chats...",
+    "tabs": {
+      "dm": "DM",
+      "group": "Group"
+    },
+    "newChat": "New Chat",
+    "newChatPlaceholder": "Nickname or group name",
+    "create": "Create",
+    "empty": "Select a conversation",
+    "online": "Online",
+    "offline": "Offline",
+    "uploading": "Uploading...",
+    "messagePlaceholder": "Send message...",
+    "attach": {
+      "image": "Choose photo",
+      "video": "Choose video",
+      "camera": "Open camera"
+    }
+  },
+  "dance": {
+    "youtubePlaceholder": "Enter YouTube URL",
+    "load": "Load",
+    "emptyVideo": "Add a video URL to start",
+    "speed": "Playback Speed",
+    "mirror": "Mirror Mode",
+    "difficulty": "AI Difficulty",
+    "levels": {
+      "beginner": "Beginner",
+      "elementary": "Elementary",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "pro": "Pro"
+    },
+    "cameraLive": "Camera Live Feed",
+    "liveFeedback": "Real-time Pose Feedback",
+    "summary": {
+      "total": "Total Score",
+      "best": "Best Moment",
+      "needs": "Needs Improvement"
+    },
+    "retry": "Retry",
+    "save": "Save",
+    "share": "Share to Community"
+  },
+  "vocal": {
+    "searchSong": "Search song or artist",
+    "tabs": {
+      "myUpload": "My Upload",
+      "popular": "Popular",
+      "discover": "Discover"
+    },
+    "record": "Record",
+    "stop": "Stop",
+    "liveScore": "Live Score",
+    "line1": "Shining on the stage today",
+    "line2": "Our rhythm comes together",
+    "line3": "Take a breath and start again",
+    "line4": "Sing accurately till the end",
+    "result": "Recording Result",
+    "pitch": "Pitch",
+    "rhythm": "Rhythm",
+    "voice": "Voice",
+    "emotion": "Emotion",
+    "aiComment": "Breath control is stable. Raise resonance slightly on the chorus high notes.",
+    "retry": "Retry",
+    "save": "Save",
+    "share": "Share with Friends"
+  },
+  "korean": {
+    "modes": {
+      "pronunciation": "Pronunciation",
+      "follow": "Follow Along",
+      "correction": "AI Correction",
+      "lyricsVocab": "Lyrics Vocabulary"
+    },
+    "sampleSentence": "Practice with clear pronunciation and rhythm today.",
+    "toggleRomanized": "Romanization Toggle",
+    "toggleTranslation": "Translation Toggle",
+    "record": "Record",
+    "syllableFeedback": "Syllable feedback appears here.",
+    "followTitle": "Follow Along Mode",
+    "lineLabel": "Line {{idx}}",
+    "nativePlay": "Play Native Audio",
+    "correctionTitle": "AI Pronunciation Correction",
+    "correctionUser": "Today weather is very joayo.",
+    "correctionAI": "Use 'jo-a-yo'. Pronounce the middle vowel more clearly.",
+    "vocabTitle": "Lyrics Vocabulary Learning"
+  },
+  "notifications": {
+    "filters": {
+      "all": "All",
+      "aicoach": "AI Coach",
+      "challenge": "Challenge",
+      "community": "Community"
+    },
+    "markAllRead": "Mark all as read",
+    "aiTitle": "🔥 Hi ONNODE STAR!",
+    "aiMessage": "You have not practiced vocal yet. Want to do 10 minutes now?",
+    "practiceNow": "Practice now",
+    "goalTitle": "🎉 Goal achieved!",
+    "goalMessage": "You completed 5 sessions this week!",
+    "nextGoal": "Set next goal",
+    "recommendTitle": "🎵 New recommendation",
+    "recommendMessage": "This content matches your current level.",
+    "start": "Start",
+    "changeSettings": "Change notification settings →"
+  }
+}

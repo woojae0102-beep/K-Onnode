@@ -1,0 +1,351 @@
+{
+  "settings": {
+    "title": "설정",
+    "subtitle": "ONNODE AI COACH 환경을 맞춤 설정하세요",
+    "sections": {
+      "profile": "프로필 & 계정",
+      "aiCoach": "AI 코치 설정",
+      "recording": "녹화 & 분석",
+      "business": "비즈니스 & 계정 연동",
+      "notifications": "알림 & 루틴",
+      "app": "앱 & 기타"
+    },
+    "myProfile": "내 프로필 설정",
+    "trackSelection": "트랙 선택",
+    "myStats": "학습 통계",
+    "coachLanguageTone": "코치 언어 & 톤",
+    "feedbackSensitivity": "피드백 민감도",
+    "coachMode": {
+      "title": "AI 코치 모드",
+      "modeBadge": "AI 코치 모드",
+      "options": {
+        "single": "단일 코치",
+        "multi": "멀티 코치",
+        "free": "자유 연습"
+      }
+    },
+    "micCamera": "마이크 & 카메라 설정",
+    "videoStorage": "연습 영상 저장 관리",
+    "exportReport": "분석 리포트 내보내기",
+    "subscription": {
+      "premiumPlan": "Premium Plan",
+      "premium": "Premium Plan",
+      "freePlan": "Free Plan",
+      "free": "Free Plan",
+      "active": "Active",
+      "nextBilling": "다음 결제",
+      "changePayment": "결제 수단 변경",
+      "changePlan": "플랜 변경",
+      "cancel": "구독 취소",
+      "upgrade": "프리미엄으로 업그레이드",
+      "freeDesc": "곡 3개 제한 · 기본 피드백만 제공",
+      "paddleNotReady": "결제 모듈이 아직 준비되지 않았어요",
+      "paymentScreenFallback": "PaymentMethodScreen 연결 예정",
+      "upgradeModalTitle": "프리미엄 혜택",
+      "cancelConfirmTitle": "구독을 취소할까요?",
+      "cancelConfirmDesc": "다음 결제일부터 프리미엄 기능이 비활성화됩니다.",
+      "premiumFeatures": {
+        "songs": "무제한 곡 선택",
+        "report": "정밀 AI 분석 리포트 (PDF)",
+        "multiCoach": "멀티 코치 모드",
+        "video": "연습 영상 무제한 저장",
+        "ranking": "글로벌 랭킹 참여"
+      }
+    },
+    "sns": {
+      "title": "SNS 계정 연동",
+      "connect": "연결하기",
+      "connected": "연결됨",
+      "disconnect": "연결 해제",
+      "disconnected": "연결되지 않음",
+      "exportHint": "연습 영상 내보내기 가능 플랫폼",
+      "platforms": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "twitter": "Twitter/X"
+      }
+    },
+    "language": {
+      "title": "언어 설정",
+      "comingSoon": "Coming Soon"
+    },
+    "notifications": {
+      "practiceReminder": "연습 알림"
+    },
+    "routine": {
+      "title": "AI Weekly Plan",
+      "recommended": "RECOMMENDED",
+      "generate": "AI 추천 루틴 생성하기",
+      "morning": "오전",
+      "evening": "오후",
+      "empty": "비어 있음",
+      "slotPrompt": "루틴 슬롯 내용을 입력하세요"
+    },
+    "privacy": {
+      "title": "개인정보 & 데이터 관리",
+      "deleteData": "내 데이터 삭제",
+      "withdraw": "계정 탈퇴",
+      "deleteConfirmTitle": "데이터를 삭제할까요?",
+      "deleteConfirmDesc": "삭제된 데이터는 복구할 수 없습니다.",
+      "withdrawConfirmTitle": "계정을 탈퇴할까요?",
+      "withdrawConfirmDesc": "탈퇴 시 모든 학습 기록이 삭제됩니다."
+    },
+    "help": {
+      "title": "도움말 & 문의",
+      "faq": "FAQ",
+      "contact": "1:1 문의"
+    },
+    "record": {
+      "micSensitivity": "마이크 민감도",
+      "noiseFilter": "배경 소음 필터",
+      "permissionCheck": "권한 확인",
+      "autoSave": "자동 저장"
+    },
+    "common": {
+      "on": "ON",
+      "off": "OFF",
+      "close": "닫기"
+    },
+    "report": {
+      "title": "ONNODE 리포트"
+    },
+    "navigation": {
+      "profileEdit": "ProfileEditScreen 연결 예정",
+      "statsDetail": "StatsDetailScreen 연결 예정",
+      "videoLibrary": "VideoLibraryScreen 연결 예정"
+    },
+    "track": {
+      "dance": "댄스",
+      "vocal": "보컬",
+      "korean": "한국어"
+    },
+    "tone": {
+      "friendly": "친근하게",
+      "expert": "전문가"
+    },
+    "feedbackLabel": {
+      "gentle": "부드럽게",
+      "normal": "보통",
+      "strict": "엄격하게"
+    },
+    "cameraDefault": {
+      "front": "전면",
+      "back": "후면"
+    },
+    "storageDuration": {
+      "days7": "7일",
+      "days30": "30일",
+      "unlimited": "무제한"
+    },
+    "reportFormat": {
+      "pdf": "PDF",
+      "image": "Image"
+    },
+    "buttons": {
+      "saveVideos": "지금 저장된 영상 보기",
+      "export": "내보내기"
+    },
+    "labels": {
+      "usage": "사용 중",
+      "sessions": "세션",
+      "minutes": "연습 분",
+      "avgScore": "평균 AI 점수",
+      "maxTracksNotice": "최대 3개 트랙까지 활성화할 수 있어요",
+      "permissionGranted": "권한 허용됨",
+      "permissionDenied": "권한 확인 필요"
+    },
+    "days": {
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토",
+      "sun": "일"
+    },
+    "toast": {
+      "upgradeSuccess": "프리미엄 업그레이드가 반영되었습니다",
+      "cancelSuccess": "구독이 취소되었습니다",
+      "snsConnected": "SNS 연동이 완료되었습니다",
+      "snsDisconnected": "SNS 연동이 해제되었습니다",
+      "requestFailed": "요청 처리 중 문제가 발생했습니다",
+      "exportSuccess": "리포트를 내보냈습니다",
+      "planGenerated": "주간 루틴을 생성했습니다",
+      "dataDeleted": "데이터 삭제 요청이 완료되었습니다"
+    }
+  },
+  "nav": {
+    "mypage": "MY PAGE",
+    "discover": "DISCOVER",
+    "community": "COMMUNITY",
+    "dance": "DANCE",
+    "vocal": "VOCAL",
+    "korean": "KOREAN AI",
+    "aicoach": "AI COACH",
+    "notifications": "NOTIFICATIONS",
+    "settings": "SETTINGS"
+  },
+  "views": {
+    "mypage": "MY PAGE",
+    "aicoach": "AI COACH"
+  },
+  "common": {
+    "more": "더보기"
+  },
+  "aicoach": {
+    "loading": "AI 코치가 답변을 생성 중입니다...",
+    "placeholder": "메시지 보내기..."
+  },
+  "mypage": {
+    "nickname": "ONNODE STAR",
+    "joinedAt": "가입일: 2025.09.10",
+    "levelText": "Lv.12 · Rising Star",
+    "today": "오늘 연습 / Today",
+    "sessions": "세션 수",
+    "totalTime": "총 시간",
+    "avgScore": "평균 점수",
+    "streak": "연속 일수",
+    "startPractice": "연습 시작하기",
+    "growth": "성장 그래프",
+    "feedbackHistory": "AI 피드백 히스토리",
+    "feedbackSummary": "템포 안정성은 좋고 팔 동작 확장이 필요합니다.",
+    "savedVideos": "저장한 영상",
+    "videoMenu": "공유 | 삭제",
+    "goalProgress": "목표 진행률",
+    "goalWeekly": "이번 주 5회 연습",
+    "goalVocal": "보컬 호흡 4회",
+    "goalKorean": "한국어 문장 10개",
+    "addGoal": "목표 추가"
+  },
+  "discover": {
+    "tabs": {
+      "all": "전체",
+      "dance": "댄스",
+      "vocal": "보컬",
+      "korean": "한국어",
+      "challenge": "챌린지"
+    },
+    "heroTitle": "오늘의 추천 콘텐츠",
+    "practiceNow": "지금 연습하기",
+    "popularDance": "인기 안무",
+    "startPractice": "연습하기",
+    "popularVocal": "인기 노래",
+    "singNow": "부르기",
+    "koreanContent": "한국어 학습 콘텐츠",
+    "challenges": "챌린지",
+    "join": "참여하기",
+    "trendingVideos": "트렌딩 영상",
+    "openPlayer": "열기",
+    "rowItem": "콘텐츠",
+    "listItem": "레슨"
+  },
+  "community": {
+    "search": "대화 검색...",
+    "tabs": {
+      "dm": "DM",
+      "group": "그룹"
+    },
+    "newChat": "새 대화",
+    "newChatPlaceholder": "닉네임 또는 그룹명",
+    "create": "생성",
+    "empty": "대화를 선택하세요",
+    "online": "온라인",
+    "offline": "오프라인",
+    "uploading": "업로드 중...",
+    "messagePlaceholder": "메시지 보내기...",
+    "attach": {
+      "image": "사진 선택",
+      "video": "동영상 선택",
+      "camera": "카메라 촬영"
+    }
+  },
+  "dance": {
+    "youtubePlaceholder": "YouTube URL 입력",
+    "load": "불러오기",
+    "emptyVideo": "영상 URL을 입력해 주세요",
+    "speed": "속도 조절",
+    "mirror": "거울 모드",
+    "difficulty": "AI 난이도",
+    "levels": {
+      "beginner": "입문",
+      "elementary": "초급",
+      "intermediate": "중급",
+      "advanced": "고급",
+      "pro": "프로"
+    },
+    "cameraLive": "카메라 라이브 피드",
+    "liveFeedback": "실시간 AI 자세 피드백",
+    "summary": {
+      "total": "전체 점수",
+      "best": "최고 순간",
+      "needs": "개선 포인트"
+    },
+    "retry": "다시 연습",
+    "save": "결과 저장",
+    "share": "커뮤니티 공유"
+  },
+  "vocal": {
+    "searchSong": "곡명 또는 아티스트 검색",
+    "tabs": {
+      "myUpload": "내 업로드",
+      "popular": "인기 곡",
+      "discover": "Discover"
+    },
+    "record": "녹음",
+    "stop": "정지",
+    "liveScore": "실시간 점수",
+    "line1": "오늘도 무대 위에서 빛나",
+    "line2": "너와 나의 리듬이 맞닿아",
+    "line3": "숨을 고르고 다시 시작해",
+    "line4": "끝까지 정확하게 노래해",
+    "result": "녹음 결과",
+    "pitch": "음정",
+    "rhythm": "박자",
+    "voice": "발성",
+    "emotion": "감정",
+    "aiComment": "호흡 안정감이 좋습니다. 후렴 고음에서 공명 위치를 조금 더 위로 올려 보세요.",
+    "retry": "다시 부르기",
+    "save": "저장",
+    "share": "친구에게 공유"
+  },
+  "korean": {
+    "modes": {
+      "pronunciation": "발음 연습",
+      "follow": "문장 따라 말하기",
+      "correction": "AI 발음 교정",
+      "lyricsVocab": "가사 기반 학습"
+    },
+    "sampleSentence": "오늘도 정확한 발음과 리듬으로 연습해요.",
+    "toggleRomanized": "로마자 보기/숨기기",
+    "toggleTranslation": "번역 보기/숨기기",
+    "record": "녹음",
+    "syllableFeedback": "음절별 피드백이 여기에 표시됩니다.",
+    "followTitle": "문장 따라 말하기",
+    "lineLabel": "{{idx}}번 문장",
+    "nativePlay": "원어민 듣기",
+    "correctionTitle": "AI 발음 교정",
+    "correctionUser": "오늘 날씨가 정말 조아요.",
+    "correctionAI": "좋아요 -> 좋아요. ㅗ 발음을 조금 더 또렷하게 내보세요.",
+    "vocabTitle": "가사 기반 어휘 학습"
+  },
+  "notifications": {
+    "filters": {
+      "all": "전체",
+      "aicoach": "AI 코치",
+      "challenge": "챌린지",
+      "community": "커뮤니티"
+    },
+    "markAllRead": "모두 읽음",
+    "aiTitle": "🔥 안녕 ONNODE STAR!",
+    "aiMessage": "오늘 보컬 연습 아직 안 했네요. 10분만 같이 해볼까요?",
+    "practiceNow": "지금 연습하기",
+    "goalTitle": "🎉 목표 달성!",
+    "goalMessage": "이번 주 5회 연습 완료했어요!",
+    "nextGoal": "다음 목표 설정하기",
+    "recommendTitle": "🎵 새 콘텐츠 추천",
+    "recommendMessage": "회원님 레벨에 딱 맞는 난이도예요.",
+    "start": "연습하기",
+    "changeSettings": "알림 설정 변경 →"
+  }
+}
