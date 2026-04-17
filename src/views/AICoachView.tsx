@@ -167,6 +167,115 @@ function average(list) {
   return list.reduce((acc, n) => acc + n, 0) / list.length;
 }
 
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function clampScore(value, min = 45, max = 98) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function choose(list) {
+  return list[randInt(0, list.length - 1)];
+}
+
+function buildPracticeLikeSeedData(days = 21) {
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+  const domains = ['dance', 'vocal', 'korean'];
+  const baseScore = { dance: 62, vocal: 60, korean: 58 };
+  const persistedSessions = [];
+  const domainHistory = { dance: [], vocal: [], korean: [] };
+  const notePool = ['A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4'];
+
+  for (let dayOffset = days - 1; dayOffset >= 0; dayOffset -= 1) {
+    const ratio = (days - dayOffset) / days;
+    const dayStart = now - dayOffset * dayMs;
+    for (const domain of domains) {
+      const sessionCount = randInt(1, 3) + (dayOffset < 6 ? 1 : 0);
+      for (let index = 0; index < sessionCount; index += 1) {
+        const trendBoost = ratio * randInt(8, 14);
+        const fatigueWave = Math.sin((dayOffset + index) * 0.7) * 2;
+        const noise = randInt(-5, 5);
+        const score = clampScore(Math.round(baseScore[domain] + trendBoost + fatigueWave + noise));
+        const at = dayStart + randInt(7 * 60 * 60 * 1000, 22 * 60 * 60 * 1000);
+        const record = { at, domain, score };
+        persistedSessions.push(record);
+        domainHistory[domain].push({ at, score });
+      }
+    }
+  }
+
+  persistedSessions.sort((a, b) => a.at - b.at);
+  domainHistory.dance.sort((a, b) => a.at - b.at);
+  domainHistory.vocal.sort((a, b) => a.at - b.at);
+  domainHistory.korean.sort((a, b) => a.at - b.at);
+
+  const latestDance = domainHistory.dance.at(-1)?.score ?? 70;
+  const latestVocal = domainHistory.vocal.at(-1)?.score ?? 70;
+  const latestKorean = domainHistory.korean.at(-1)?.score ?? 70;
+  const danceNeeds =
+    latestDance < 68 ? '팔 각도 정렬 · 동작 크기' : latestDance < 78 ? '좌우 대칭 · 중심 이동 안정화' : '동작 디테일 · 박자 정확도 유지';
+  const pitchFeedback =
+    latestVocal < 68 ? '음정이 조금 낮습니다. 시작음을 1~2도 올려보세요.' : latestVocal < 78 ? '조금 높습니다.' : '목표 음정에 안정적으로 맞고 있어요.';
+
+  const reports = {
+    dance: {
+      updatedAt: now,
+      score: latestDance,
+      summary: { needs: danceNeeds },
+      metrics: {
+        activity: randInt(72, 92),
+        confidence: randInt(74, 96),
+      },
+    },
+    vocal: {
+      updatedAt: now,
+      liveScore: latestVocal,
+      pitchScore: clampScore(latestVocal + randInt(-4, 3), 40, 100),
+      rhythmScore: clampScore(latestVocal + randInt(-5, 4), 40, 100),
+      currentNote: choose(notePool),
+      currentHz: Number((randInt(200, 460) + Math.random()).toFixed(1)),
+      pitchFeedback,
+      tuningState: latestVocal >= 75 ? 'on-target' : 'adjust',
+    },
+    korean: {
+      pronunciation: {
+        updatedAt: now - 90 * 1000,
+        transcript: '오늘은 발음과 억양을 천천히 정확하게 맞춰보겠습니다',
+        metrics: { overall: clampScore(latestKorean + randInt(-3, 2), 40, 100) },
+      },
+      follow: {
+        updatedAt: now - 60 * 1000,
+        transcript: '문장 따라 말하기를 통해 호흡과 리듬을 맞추고 있습니다',
+        metrics: { overall: clampScore(latestKorean + randInt(-2, 3), 40, 100) },
+      },
+      correction: {
+        updatedAt: now - 40 * 1000,
+        transcript: 'ai 교정 피드백으로 자주 틀리는 발음을 다시 연습했어요',
+        metrics: { overall: clampScore(latestKorean + randInt(-3, 2), 40, 100) },
+      },
+      lyrics: {
+        updatedAt: now - 20 * 1000,
+        transcript: '가사 기반 학습으로 단어 인식과 문장 정확도를 점검 중입니다',
+        metrics: { overall: clampScore(latestKorean + randInt(-2, 3), 40, 100) },
+      },
+    },
+  };
+
+  const reportHistory = {
+    dance: domainHistory.dance.slice(-40),
+    vocal: domainHistory.vocal.slice(-40),
+    korean: domainHistory.korean.slice(-40),
+  };
+
+  return {
+    persistedSessions: persistedSessions.slice(-1000),
+    reportHistory,
+    reports,
+  };
+}
+
 function loadPersistedSessions() {
   if (typeof window === 'undefined') return [];
   try {
@@ -365,7 +474,6 @@ function detectIntent(rawText) {
 
 function buildReportCard(target, reports, reportHistory, persistedSessions, period = 'weekly', reportDate = dayKey(Date.now()), options = {}) {
   const includeTrend = options.includeTrend !== false;
-  const includeJson = options.includeJson !== false;
   const includeGrowth = options.includeGrowth !== false;
   const lines = [];
   const trendLines = [];
@@ -419,7 +527,6 @@ function buildReportCard(target, reports, reportHistory, persistedSessions, peri
       periodSummary,
       trend: [],
       growth: null,
-      jsonText: '',
     };
   }
   const growth = includeGrowth ? buildGrowthSection(target, persistedSessions, reports) : null;
@@ -429,16 +536,6 @@ function buildReportCard(target, reports, reportHistory, persistedSessions, peri
     periodSummary,
     trend: includeTrend ? trendLines : [],
     growth,
-    jsonText: includeJson
-      ? JSON.stringify(
-          {
-            ...jsonPayload,
-            growth: growth || {},
-          },
-          null,
-          2
-        )
-      : '',
     text: `요청하신 ${target === 'all' ? '오늘의 통합' : target} 리포트에 성장 분석(어제/지난주 비교)까지 정리해드릴게요.`,
   };
 }
@@ -673,7 +770,6 @@ export default function AICoachView() {
       const card = buildReportCard(intent.target, reports, reportHistory, persistedSessions, intent.period || reportPeriod, reportDate, {
         includeTrend: intent.includeTrend,
         includeGrowth: intent.includeGrowth,
-        includeJson: intent.includeJson,
       });
       setLastReportCard(card);
       setMessages((prev) => [...prev, createMessage('assistant', card.text)]);
@@ -715,12 +811,35 @@ export default function AICoachView() {
       const card = buildReportCard(target, reports, reportHistory, persistedSessions, period, date, {
         includeTrend: true,
         includeGrowth: true,
-        includeJson: true,
       });
       setLastReportCard(card);
     },
     [persistedSessions, reportDate, reportHistory, reportPeriod, reports]
   );
+
+  const createPracticeLikeReportData = useCallback(() => {
+    const generated = buildPracticeLikeSeedData(21);
+    setPersistedSessions(generated.persistedSessions);
+    savePersistedSessions(generated.persistedSessions);
+    setReportHistory(generated.reportHistory);
+    setReports(generated.reports);
+    historyMetaRef.current = {
+      dance: { lastAt: 0, lastScore: null },
+      vocal: { lastAt: 0, lastScore: null },
+      korean: { lastAt: 0, lastScore: null },
+    };
+    const card = buildReportCard('all', generated.reports, generated.reportHistory, generated.persistedSessions, reportPeriod, reportDate, {
+      includeTrend: true,
+      includeGrowth: true,
+    });
+    setLastReportCard(card);
+    setActiveTab('report');
+    setActiveFeature('none');
+    setMessages((prev) => [
+      ...prev,
+      createMessage('assistant', `실전형 샘플 연습 데이터 ${generated.persistedSessions.length}건을 생성해 리포트를 갱신했어요. 추세/성장/추천 루틴을 바로 확인해보세요.`),
+    ]);
+  }, [reportDate, reportPeriod]);
 
   const generateCoachReply = useCallback(
     async (userInput, conversationSnapshot, reportCard = null) => {
@@ -909,6 +1028,13 @@ export default function AICoachView() {
                   >
                     기간 리포트 갱신
                   </button>
+                  <button
+                    type="button"
+                    onClick={createPracticeLikeReportData}
+                    className="rounded-md border border-[#FF1F8E] bg-[#FFF4FA] px-2 py-1 text-[11px] text-[#FF1F8E]"
+                  >
+                    실전형 샘플 데이터 생성
+                  </button>
                 </div>
               </div>
               <p className="text-sm font-semibold text-[#111111]">{lastReportCard.title}</p>
@@ -983,12 +1109,6 @@ export default function AICoachView() {
                     </div>
                   ) : null}
                 </div>
-              ) : null}
-              {lastReportCard.jsonText ? (
-                <details className="rounded-lg border border-[#E5E5E5] bg-[#FCFCFD] p-2">
-                  <summary className="cursor-pointer text-xs font-semibold text-[#111111]">상세 JSON 리포트</summary>
-                  <pre className="mt-2 text-[10px] leading-4 text-[#555555] overflow-x-auto">{lastReportCard.jsonText}</pre>
-                </details>
               ) : null}
             </div>
           ) : (
