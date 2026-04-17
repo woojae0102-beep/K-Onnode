@@ -1,9 +1,9 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useKoreanSpeechCoach } from '../../hooks/useKoreanSpeechCoach';
 
-export default function PronunciationMode() {
+export default function PronunciationMode({ onReportUpdate }) {
   const { t } = useTranslation();
   const [recording, setRecording] = useState(false);
   const [showRomanized, setShowRomanized] = useState(false);
@@ -15,6 +15,17 @@ export default function PronunciationMode() {
     active: recording,
     referenceText: sampleSentence,
   });
+
+  useEffect(() => {
+    onReportUpdate?.({
+      mode: 'korean-pronunciation',
+      recording,
+      transcript: combinedTranscript,
+      volumeLevel,
+      metrics,
+      updatedAt: Date.now(),
+    });
+  }, [combinedTranscript, metrics, onReportUpdate, recording, volumeLevel]);
 
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 space-y-3">

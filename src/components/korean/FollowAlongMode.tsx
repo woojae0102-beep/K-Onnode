@@ -10,7 +10,7 @@ const PRACTICE_LINES = [
   '마지막 문장까지 호흡을 일정하게 유지해요.',
 ];
 
-export default function FollowAlongMode() {
+export default function FollowAlongMode({ onReportUpdate }) {
   const { t } = useTranslation();
   const [activeLineIdx, setActiveLineIdx] = useState(-1);
   const [recording, setRecording] = useState(false);
@@ -44,6 +44,21 @@ export default function FollowAlongMode() {
     }, 500);
     return () => clearInterval(timer);
   }, [metrics.overall, recording]);
+
+  useEffect(() => {
+    const validScores = lineScores.filter((value) => Number.isFinite(value));
+    const avg = validScores.length ? Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length) : null;
+    onReportUpdate?.({
+      mode: 'korean-follow',
+      recording,
+      activeLineIdx,
+      transcript: combinedTranscript,
+      metrics,
+      lineScores,
+      lineAverage: avg,
+      updatedAt: Date.now(),
+    });
+  }, [activeLineIdx, combinedTranscript, lineScores, metrics, onReportUpdate, recording]);
 
   const toggleLineRecording = (idx) => {
     if (recording && idx === activeLineIdx) {

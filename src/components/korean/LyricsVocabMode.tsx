@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useKoreanSpeechCoach } from '../../hooks/useKoreanSpeechCoach';
 
@@ -7,7 +7,7 @@ function normalize(text) {
   return String(text || '').toLowerCase().replace(/[^0-9a-zA-Z가-힣]/g, '');
 }
 
-export default function LyricsVocabMode() {
+export default function LyricsVocabMode({ onReportUpdate }) {
   const { t } = useTranslation();
   const [recording, setRecording] = useState(false);
   const vocab = [
@@ -30,6 +30,21 @@ export default function LyricsVocabMode() {
   }, [combinedTranscript]);
   const matchedCount = matchedWords.filter((item) => item.matched).length;
   const vocabScore = Math.round((matchedCount / Math.max(1, matchedWords.length)) * 100);
+  const overall = Math.round(vocabScore * 0.5 + metrics.overall * 0.5);
+
+  useEffect(() => {
+    onReportUpdate?.({
+      mode: 'korean-lyrics',
+      recording,
+      transcript: combinedTranscript,
+      vocabScore,
+      matchedCount,
+      vocabTotal: matchedWords.length,
+      metrics,
+      overall,
+      updatedAt: Date.now(),
+    });
+  }, [combinedTranscript, matchedCount, matchedWords.length, metrics, onReportUpdate, overall, recording, vocabScore]);
 
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 space-y-3">
@@ -60,7 +75,7 @@ export default function LyricsVocabMode() {
       <div className="grid grid-cols-3 gap-2 text-[11px]">
         <ScoreBox label="어휘 인식" value={`${vocabScore}%`} />
         <ScoreBox label="문장 일치" value={`${metrics.similarity}%`} />
-        <ScoreBox label="종합" value={`${Math.round((vocabScore * 0.5) + (metrics.overall * 0.5))}`} />
+        <ScoreBox label="종합" value={`${overall}`} />
       </div>
       {micError ? <p className="text-xs text-rose-500">{micError}</p> : null}
       {speechError ? <p className="text-xs text-rose-500">{speechError}</p> : null}

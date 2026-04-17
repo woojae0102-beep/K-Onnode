@@ -8,7 +8,7 @@ import PitchMeter from '../components/vocal/PitchMeter';
 import WaveformVisualizer from '../components/vocal/WaveformVisualizer';
 import { useAudioAnalysis } from '../hooks/useAudioAnalysis';
 
-export default function VocalTrainingView({ onNavigate }) {
+export default function VocalTrainingView({ onNavigate, onReportUpdate }) {
   const { t } = useTranslation();
   const [recording, setRecording] = useState(false);
   const [targetMidi, setTargetMidi] = useState(60);
@@ -110,6 +110,43 @@ export default function VocalTrainingView({ onNavigate }) {
     if (!valid.length) return null;
     return Math.round(valid.reduce((a, b) => a + b, 0) / valid.length);
   }, [lineScores]);
+
+  useEffect(() => {
+    onReportUpdate?.({
+      mode: 'vocal',
+      recording,
+      isListening,
+      summary,
+      liveScore,
+      pitchScore,
+      rhythmScore,
+      currentHz,
+      currentNote,
+      currentCents,
+      targetNote,
+      tuningState,
+      lineScores,
+      lineAverage,
+      pitchFeedback,
+      updatedAt: Date.now(),
+    });
+  }, [
+    currentCents,
+    currentHz,
+    currentNote,
+    isListening,
+    lineAverage,
+    lineScores,
+    liveScore,
+    onReportUpdate,
+    pitchFeedback,
+    pitchScore,
+    recording,
+    rhythmScore,
+    summary,
+    targetNote,
+    tuningState,
+  ]);
 
   const tuningLabel = useMemo(() => {
     if (tuningState === 'in-tune') return '정확';

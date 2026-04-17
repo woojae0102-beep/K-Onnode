@@ -7,7 +7,7 @@ import PoseFeedbackOverlay from '../components/dance/PoseFeedbackOverlay';
 import YouTubeImport from '../components/dance/YouTubeImport';
 import { usePoseDetection } from '../hooks/usePoseDetection';
 
-export default function DanceTrainingView({ onNavigate }) {
+export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
   const { t } = useTranslation();
   const [videoUrl, setVideoUrl] = useState('');
   const [rate, setRate] = useState(1.0);
@@ -34,6 +34,19 @@ export default function DanceTrainingView({ onNavigate }) {
       body: JSON.stringify({ difficulty }),
     }).catch(() => {});
   }, [difficulty]);
+
+  useEffect(() => {
+    onReportUpdate?.({
+      mode: 'dance',
+      cameraOn,
+      isAnalyzing,
+      score,
+      summary,
+      metrics,
+      feedbackList,
+      updatedAt: Date.now(),
+    });
+  }, [cameraOn, feedbackList, isAnalyzing, metrics, onReportUpdate, score, summary]);
 
   const stopCamera = () => {
     const stream = streamRef.current;

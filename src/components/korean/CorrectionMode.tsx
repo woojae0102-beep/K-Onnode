@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useKoreanSpeechCoach } from '../../hooks/useKoreanSpeechCoach';
 
@@ -14,7 +14,7 @@ function buildCorrectionReply(userText, metrics) {
   return tips.join(' ');
 }
 
-export default function CorrectionMode() {
+export default function CorrectionMode({ onReportUpdate }) {
   const { t } = useTranslation();
   const [recording, setRecording] = useState(false);
   const reference = t('korean.correctionUser', { defaultValue: '오늘도 정확한 발음으로 연습하겠습니다.' });
@@ -23,6 +23,17 @@ export default function CorrectionMode() {
     referenceText: reference,
   });
   const aiReply = useMemo(() => buildCorrectionReply(combinedTranscript, metrics), [combinedTranscript, metrics]);
+
+  useEffect(() => {
+    onReportUpdate?.({
+      mode: 'korean-correction',
+      recording,
+      transcript: combinedTranscript || interimTranscript,
+      metrics,
+      aiReply,
+      updatedAt: Date.now(),
+    });
+  }, [aiReply, combinedTranscript, interimTranscript, metrics, onReportUpdate, recording]);
 
   return (
     <div className="rounded-xl border border-[#E5E5E5] bg-white p-4 space-y-3">
