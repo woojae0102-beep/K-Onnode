@@ -1,0 +1,9 @@
+{
+  "views": {
+    "aicoach": "AI COACH"
+  },
+  "aicoach": {
+    "loading": "AI Coach génère une réponse...",
+    "placeholder": "Envoyer un message..."
+  }
+}
