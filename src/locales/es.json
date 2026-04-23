@@ -1,9 +1,484 @@
 {
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "Personaliza tu experiencia ONNODE AI COACH",
+    "sections": {
+      "profile": "Perfil y cuenta",
+      "aiCoach": "Ajustes del AI Coach",
+      "recording": "Grabación y análisis",
+      "business": "Negocio e integración de cuenta",
+      "notifications": "Notificaciones y rutina",
+      "app": "App y privacidad"
+    },
+    "myProfile": "Mi perfil",
+    "trackSelection": "Selección de pista",
+    "myStats": "Mis estadísticas",
+    "coachLanguageTone": "Idioma y tono del coach",
+    "feedbackSensitivity": "Sensibilidad del feedback",
+    "coachMode": {
+      "title": "Modo de coach",
+      "modeBadge": "Modo AI Coach",
+      "options": {
+        "single": "Coach individual",
+        "multi": "Multi coach",
+        "free": "Práctica libre"
+      }
+    },
+    "micCamera": "Micrófono y cámara",
+    "videoStorage": "Almacenamiento de vídeo",
+    "exportReport": "Exportar informe",
+    "subscription": {
+      "premiumPlan": "Plan Premium",
+      "premium": "Plan Premium",
+      "freePlan": "Plan Gratuito",
+      "free": "Plan Gratuito",
+      "active": "Activo",
+      "nextBilling": "Próximo cobro",
+      "changePayment": "Cambiar método de pago",
+      "changePlan": "Cambiar plan",
+      "cancel": "Cancelar suscripción",
+      "upgrade": "Mejorar a Premium",
+      "freeDesc": "Límite de 3 canciones · solo feedback básico",
+      "paddleNotReady": "El pago con Paddle aún no está listo",
+      "paymentScreenFallback": "Integración de PaymentMethodScreen pendiente",
+      "upgradeModalTitle": "Funciones Premium",
+      "cancelConfirmTitle": "¿Cancelar tu suscripción?",
+      "cancelConfirmDesc": "El acceso Premium terminará en el próximo ciclo de facturación.",
+      "premiumFeatures": {
+        "songs": "Selección ilimitada de canciones",
+        "report": "Informe detallado de análisis AI (PDF)",
+        "multiCoach": "Modo multi coach",
+        "video": "Almacenamiento ilimitado de vídeos",
+        "ranking": "Participación en ranking global"
+      }
+    },
+    "sns": {
+      "title": "Integración de redes sociales",
+      "connect": "Conectar",
+      "connected": "Conectado",
+      "disconnect": "Desconectar",
+      "disconnected": "No conectado",
+      "exportHint": "Plataformas disponibles para exportar",
+      "platforms": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "twitter": "Twitter/X"
+      }
+    },
+    "language": {
+      "title": "Idioma",
+      "comingSoon": "Próximamente"
+    },
+    "notifications": {
+      "practiceReminder": "Recordatorio de práctica"
+    },
+    "routine": {
+      "title": "Plan semanal AI",
+      "recommended": "RECOMENDADO",
+      "generate": "Generar rutina semanal AI",
+      "morning": "Mañana",
+      "evening": "Tarde",
+      "empty": "Vacío",
+      "slotPrompt": "Introduce contenido para este espacio"
+    },
+    "privacy": {
+      "title": "Privacidad y datos",
+      "deleteData": "Eliminar mis datos",
+      "withdraw": "Eliminar cuenta",
+      "deleteConfirmTitle": "¿Eliminar tus datos?",
+      "deleteConfirmDesc": "Los datos eliminados no pueden recuperarse.",
+      "withdrawConfirmTitle": "¿Eliminar esta cuenta?",
+      "withdrawConfirmDesc": "Todo el historial de aprendizaje será eliminado."
+    },
+    "help": {
+      "title": "Ayuda y contacto",
+      "faq": "Preguntas frecuentes",
+      "contact": "Soporte 1:1"
+    },
+    "record": {
+      "micSensitivity": "Sensibilidad del micro",
+      "noiseFilter": "Filtro de ruido de fondo",
+      "permissionCheck": "Comprobación de permisos",
+      "autoSave": "Guardado automático"
+    },
+    "common": {
+      "on": "ON",
+      "off": "OFF",
+      "close": "Cerrar"
+    },
+    "report": {
+      "title": "Informe ONNODE"
+    },
+    "navigation": {
+      "profileEdit": "Integración de ProfileEditScreen pendiente",
+      "statsDetail": "Integración de StatsDetailScreen pendiente",
+      "videoLibrary": "Integración de VideoLibraryScreen pendiente"
+    },
+    "track": {
+      "dance": "Baile",
+      "vocal": "Vocal",
+      "korean": "Coreano"
+    },
+    "tone": {
+      "friendly": "Amigable",
+      "expert": "Experto"
+    },
+    "feedbackLabel": {
+      "gentle": "Suave",
+      "normal": "Normal",
+      "strict": "Estricto"
+    },
+    "cameraDefault": {
+      "front": "Frontal",
+      "back": "Trasera"
+    },
+    "storageDuration": {
+      "days7": "7 días",
+      "days30": "30 días",
+      "unlimited": "Ilimitado"
+    },
+    "reportFormat": {
+      "pdf": "PDF",
+      "image": "Imagen"
+    },
+    "buttons": {
+      "saveVideos": "Ver vídeos guardados",
+      "export": "Exportar"
+    },
+    "labels": {
+      "usage": "Uso",
+      "sessions": "Sesiones",
+      "minutes": "Min de práctica",
+      "avgScore": "Puntuación AI media",
+      "maxTracksNotice": "Puedes activar hasta 3 pistas",
+      "permissionGranted": "Permiso concedido",
+      "permissionDenied": "Revisa permisos"
+    },
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb",
+      "sun": "Dom"
+    },
+    "toast": {
+      "upgradeSuccess": "Mejora Premium aplicada",
+      "cancelSuccess": "Suscripción cancelada",
+      "snsConnected": "Red social conectada",
+      "snsDisconnected": "Red social desconectada",
+      "requestFailed": "Error en la solicitud",
+      "exportSuccess": "Informe exportado",
+      "planGenerated": "Plan semanal generado",
+      "dataDeleted": "Solicitud de eliminación completada"
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "chat": "Chat",
+    "aicoach": "AI Coach",
+    "discover": "Explorar",
+    "mypage": "MI PERFIL",
+    "community": "COMUNIDAD",
+    "dance": "BAILE",
+    "vocal": "VOCAL",
+    "korean": "COREANO AI",
+    "notifications": "NOTIFICACIONES",
+    "settings": "AJUSTES"
+  },
+  "home": {
+    "heroTag": "AI K-POP COACH",
+    "heroTitleLine1": "La forma más inteligente de aprender K-POP,",
+    "heroTitleLine2": "ONNODE",
+    "heroSubtitle": "Nuestra AI analiza baile, voz y coreano en tiempo real y te da feedback al instante.",
+    "heroSubtitle2": "Empieza a practicar ahora mismo.",
+    "startBtn": "🔥 Empezar práctica de hoy",
+    "selectTrack": "Elegir mi pista",
+    "myStatus": "Mi estado",
+    "currentLevel": "Nivel actual",
+    "streakDays": "Racha de práctica",
+    "recentScore": "Puntuación AI reciente",
+    "unitLv": "Lv",
+    "unitDays": "d",
+    "unitScore": "pts",
+    "quickStart": "Inicio rápido",
+    "danceTitle": "Entrenamiento de baile",
+    "danceDesc": "Análisis de coreografía desde YouTube · feedback postural AI",
+    "danceBadge": "Entrenamiento de baile",
+    "vocalTitle": "Entrenamiento vocal",
+    "vocalDesc": "Análisis en tiempo real de tono, ritmo y vocalización",
+    "vocalBadge": "Entrenamiento vocal",
+    "koreanTitle": "Coreano AI",
+    "koreanDesc": "Práctica de pronunciación y conversación con letras K-POP",
+    "koreanBadge": "Coreano AI"
+  },
+  "leftPanel": {
+    "myPage": "MI PERFIL",
+    "training": "Entrenamiento",
+    "profile": "Perfil",
+    "growth": "Gráfico de progreso",
+    "goals": "Objetivos",
+    "savedVideos": "Vídeos guardados",
+    "feedbackHistory": "Historial de feedback AI",
+    "danceTraining": "Entrenamiento de baile",
+    "vocalTraining": "Entrenamiento vocal",
+    "koreanAI": "Coreano AI",
+    "discover": "EXPLORAR",
+    "trending": "Tendencias",
+    "popularDance": "Bailes populares",
+    "popularSongs": "Canciones populares",
+    "koreanContent": "Contenido coreano",
+    "challenges": "Retos",
+    "aiCoach": "AI COACH",
+    "todayPick": "Elección de hoy",
+    "weakness": "Análisis de debilidades",
+    "routine": "Rutina personalizada",
+    "coaching": "Coaching por objetivos",
+    "noConversations": "No hay conversaciones."
+  },
+  "report": {
+    "filterAll": "Todos",
+    "trackDance": "Baile",
+    "trackVocal": "Vocal",
+    "trackKorean": "Coreano",
+    "trackReportSuffix": "Informe",
+    "loadMore": "Cargar más",
+    "emptyTitle": "Aún no hay informes",
+    "emptyCta": "Inicia tu primera práctica →",
+    "viewDetail": "Ver detalle →",
+    "aiOneLine": "Nota del AI",
+    "overallScore": "Puntuación total",
+    "sections": {
+      "summary": "Resultado general",
+      "feedback": "Feedback AI",
+      "timeline": "Análisis por secciones",
+      "routine": "Rutina recomendada",
+      "content": "También te puede gustar"
+    },
+    "routineCardTitle": "Rutina recomendada por AI",
+    "routineCardSub": "Basada en este informe",
+    "startRoutine": "Empezar esta rutina",
+    "practiceAgain": "Practicar de nuevo",
+    "back": "Volver",
+    "estMin": "~{{min}} min",
+    "score": "{{value}}",
+    "noTimeline": "Sin datos de línea temporal.",
+    "dayLabel": "Día {{day}}",
+    "scoreLabel": {
+      "posture": "Precisión postural",
+      "rhythm": "Precisión rítmica",
+      "completion": "Ejecución del movimiento",
+      "expression": "Expresión",
+      "pitch": "Precisión del tono",
+      "tempo": "Precisión del tempo",
+      "voice": "Vocalización",
+      "emotion": "Emoción",
+      "pronunciation": "Pronunciación",
+      "intonation": "Entonación",
+      "fluency": "Fluidez",
+      "vocabulary": "Vocabulario"
+    }
+  },
+  "discoverNew": {
+    "categories": {
+      "all": "Todos",
+      "trending": "Tendencias",
+      "dance": "Bailes populares",
+      "songs": "Canciones populares",
+      "challenges": "Retos",
+      "korean": "Coreano"
+    },
+    "sections": {
+      "trending": "Tendencias",
+      "popularDance": "Bailes populares",
+      "popularSongs": "Canciones populares",
+      "challenges": "Retos",
+      "korean": "Contenido coreano"
+    },
+    "actions": {
+      "practice": "Practicar",
+      "sing": "Cantar",
+      "join": "Unirse",
+      "open": "Abrir"
+    },
+    "labels": {
+      "updatedWeekly": "Actualización semanal",
+      "updatedAt": "Actualizado {{date}}",
+      "participants": "{{count}} participantes",
+      "deadline": "Fin {{date}}",
+      "bpm": "{{bpm}} BPM",
+      "level": "Nv {{level}}",
+      "duration": "{{duration}}",
+      "difficulty": {
+        "easy": "Fácil",
+        "normal": "Normal",
+        "hard": "Difícil"
+      }
+    },
+    "empty": "Cargando contenido..."
+  },
   "views": {
+    "mypage": "MI PERFIL",
     "aicoach": "AI COACH"
   },
+  "common": {
+    "more": "Más"
+  },
   "aicoach": {
-    "loading": "El AI Coach está generando una respuesta...",
-    "placeholder": "Enviar un mensaje..."
+    "loading": "El AI coach está generando una respuesta...",
+    "placeholder": "Enviar mensaje..."
+  },
+  "mypage": {
+    "nickname": "ONNODE STAR",
+    "joinedAt": "Se unió: 10.09.2025",
+    "levelText": "Lv.12 · Estrella ascendente",
+    "today": "Hoy",
+    "sessions": "Sesiones",
+    "totalTime": "Tiempo total",
+    "avgScore": "Puntuación media",
+    "streak": "Racha",
+    "startPractice": "Empezar a practicar",
+    "growth": "Gráfico de progreso",
+    "feedbackHistory": "Historial de feedback AI",
+    "feedbackSummary": "El tempo es estable. La extensión del brazo necesita mejora.",
+    "savedVideos": "Vídeos guardados",
+    "videoMenu": "Compartir | Eliminar",
+    "goalProgress": "Progreso del objetivo",
+    "goalWeekly": "Practicar 5 veces esta semana",
+    "goalVocal": "Respiración vocal 4 veces",
+    "goalKorean": "10 frases en coreano",
+    "addGoal": "Añadir objetivo"
+  },
+  "discover": {
+    "tabs": {
+      "all": "Todos",
+      "dance": "Baile",
+      "vocal": "Vocal",
+      "korean": "Coreano",
+      "challenge": "Reto"
+    },
+    "heroTitle": "Destacado para ti",
+    "practiceNow": "Practicar ahora",
+    "popularDance": "Coreografías populares",
+    "startPractice": "Practicar",
+    "popularVocal": "Canciones populares",
+    "singNow": "Cantar",
+    "koreanContent": "Aprendizaje de coreano",
+    "challenges": "Retos",
+    "join": "Unirse",
+    "trendingVideos": "Vídeos en tendencia",
+    "openPlayer": "Abrir",
+    "rowItem": "Contenido",
+    "listItem": "Lección"
+  },
+  "community": {
+    "search": "Buscar chats...",
+    "tabs": {
+      "dm": "DM",
+      "group": "Grupo"
+    },
+    "newChat": "Nuevo chat",
+    "newChatPlaceholder": "Nombre de usuario o grupo",
+    "create": "Crear",
+    "empty": "Selecciona una conversación",
+    "online": "En línea",
+    "offline": "Desconectado",
+    "uploading": "Subiendo...",
+    "messagePlaceholder": "Enviar mensaje...",
+    "attach": {
+      "image": "Elegir foto",
+      "video": "Elegir vídeo",
+      "camera": "Abrir cámara"
+    }
+  },
+  "dance": {
+    "youtubePlaceholder": "Introduce una URL de YouTube",
+    "load": "Cargar",
+    "emptyVideo": "Añade una URL de vídeo para empezar",
+    "speed": "Velocidad de reproducción",
+    "mirror": "Modo espejo",
+    "difficulty": "Dificultad AI",
+    "levels": {
+      "beginner": "Principiante",
+      "elementary": "Básico",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado",
+      "pro": "Pro"
+    },
+    "cameraLive": "Cámara en vivo",
+    "liveFeedback": "Feedback postural en tiempo real",
+    "summary": {
+      "total": "Puntuación total",
+      "best": "Mejor momento",
+      "needs": "A mejorar"
+    },
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "share": "Compartir en la comunidad"
+  },
+  "vocal": {
+    "searchSong": "Buscar canción o artista",
+    "tabs": {
+      "myUpload": "Mis subidas",
+      "popular": "Populares",
+      "discover": "Descubrir"
+    },
+    "record": "Grabar",
+    "stop": "Detener",
+    "liveScore": "Puntuación en vivo",
+    "line1": "Brillando hoy sobre el escenario",
+    "line2": "Nuestro ritmo se une",
+    "line3": "Respira y empieza de nuevo",
+    "line4": "Canta con precisión hasta el final",
+    "result": "Resultado de la grabación",
+    "pitch": "Tono",
+    "rhythm": "Ritmo",
+    "voice": "Voz",
+    "emotion": "Emoción",
+    "aiComment": "El control de respiración es estable. Eleva un poco la resonancia en los agudos del estribillo.",
+    "retry": "Reintentar",
+    "save": "Guardar",
+    "share": "Compartir con amigos"
+  },
+  "korean": {
+    "modes": {
+      "pronunciation": "Pronunciación",
+      "follow": "Repetir",
+      "correction": "Corrección AI",
+      "lyricsVocab": "Vocabulario de letras"
+    },
+    "sampleSentence": "Practica hoy con pronunciación y ritmo claros.",
+    "toggleRomanized": "Romanización on/off",
+    "toggleTranslation": "Traducción on/off",
+    "record": "Grabar",
+    "syllableFeedback": "Aquí aparece el feedback silábico.",
+    "followTitle": "Modo repetir",
+    "lineLabel": "Línea {{idx}}",
+    "nativePlay": "Reproducir audio nativo",
+    "correctionTitle": "Corrección de pronunciación AI",
+    "correctionUser": "Hoy el clima está muy joayo.",
+    "correctionAI": "Usa 'jo-a-yo'. Pronuncia la vocal media con más claridad.",
+    "vocabTitle": "Aprendizaje de vocabulario con letras"
+  },
+  "notifications": {
+    "filters": {
+      "all": "Todas",
+      "aicoach": "AI Coach",
+      "challenge": "Reto",
+      "community": "Comunidad"
+    },
+    "markAllRead": "Marcar todo como leído",
+    "aiTitle": "🔥 ¡Hola ONNODE STAR!",
+    "aiMessage": "Aún no has practicado vocal. ¿Hacemos 10 minutos ahora?",
+    "practiceNow": "Practicar ahora",
+    "goalTitle": "🎉 ¡Objetivo logrado!",
+    "goalMessage": "¡Completaste 5 sesiones esta semana!",
+    "nextGoal": "Fijar siguiente objetivo",
+    "recommendTitle": "🎵 Nueva recomendación",
+    "recommendMessage": "Este contenido encaja con tu nivel actual.",
+    "start": "Empezar",
+    "changeSettings": "Cambiar ajustes de notificación →"
   }
 }

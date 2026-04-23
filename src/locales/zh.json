@@ -1,9 +1,484 @@
 {
+  "settings": {
+    "title": "设置",
+    "subtitle": "自定义您的 ONNODE AI COACH 体验",
+    "sections": {
+      "profile": "个人资料与账户",
+      "aiCoach": "AI 教练设置",
+      "recording": "录制与分析",
+      "business": "商务与账户关联",
+      "notifications": "通知与日程",
+      "app": "应用与隐私"
+    },
+    "myProfile": "我的资料",
+    "trackSelection": "轨道选择",
+    "myStats": "我的数据",
+    "coachLanguageTone": "教练语言与语气",
+    "feedbackSensitivity": "反馈敏感度",
+    "coachMode": {
+      "title": "教练模式",
+      "modeBadge": "AI 教练模式",
+      "options": {
+        "single": "单人教练",
+        "multi": "多人教练",
+        "free": "自由练习"
+      }
+    },
+    "micCamera": "麦克风与摄像头",
+    "videoStorage": "视频存储",
+    "exportReport": "导出报告",
+    "subscription": {
+      "premiumPlan": "高级套餐",
+      "premium": "高级套餐",
+      "freePlan": "免费套餐",
+      "free": "免费套餐",
+      "active": "使用中",
+      "nextBilling": "下次扣款",
+      "changePayment": "更改支付方式",
+      "changePlan": "更改套餐",
+      "cancel": "取消订阅",
+      "upgrade": "升级到高级版",
+      "freeDesc": "最多 3 首歌曲 · 仅基础反馈",
+      "paddleNotReady": "Paddle 结账尚未就绪",
+      "paymentScreenFallback": "付款方式页面待接入",
+      "upgradeModalTitle": "高级功能",
+      "cancelConfirmTitle": "取消订阅?",
+      "cancelConfirmDesc": "高级权限将在下一个计费周期结束。",
+      "premiumFeatures": {
+        "songs": "无限歌曲选择",
+        "report": "详细 AI 分析报告 (PDF)",
+        "multiCoach": "多人教练模式",
+        "video": "无限练习视频存储",
+        "ranking": "全球排名参与"
+      }
+    },
+    "sns": {
+      "title": "社交账户关联",
+      "connect": "连接",
+      "connected": "已连接",
+      "disconnect": "断开连接",
+      "disconnected": "未连接",
+      "exportHint": "视频导出可用平台",
+      "platforms": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "twitter": "Twitter/X"
+      }
+    },
+    "language": {
+      "title": "语言",
+      "comingSoon": "即将推出"
+    },
+    "notifications": {
+      "practiceReminder": "练习提醒"
+    },
+    "routine": {
+      "title": "AI 周计划",
+      "recommended": "推荐",
+      "generate": "生成 AI 周训练计划",
+      "morning": "上午",
+      "evening": "下午",
+      "empty": "空",
+      "slotPrompt": "输入此时段的训练内容"
+    },
+    "privacy": {
+      "title": "隐私与数据",
+      "deleteData": "删除我的数据",
+      "withdraw": "删除账户",
+      "deleteConfirmTitle": "确认删除数据?",
+      "deleteConfirmDesc": "已删除的数据无法恢复。",
+      "withdrawConfirmTitle": "确认删除此账户?",
+      "withdrawConfirmDesc": "所有学习记录将被清除。"
+    },
+    "help": {
+      "title": "帮助与联系",
+      "faq": "常见问题",
+      "contact": "一对一客服"
+    },
+    "record": {
+      "micSensitivity": "麦克风灵敏度",
+      "noiseFilter": "背景噪音过滤",
+      "permissionCheck": "权限检查",
+      "autoSave": "自动保存"
+    },
+    "common": {
+      "on": "开",
+      "off": "关",
+      "close": "关闭"
+    },
+    "report": {
+      "title": "ONNODE 报告"
+    },
+    "navigation": {
+      "profileEdit": "资料编辑页面待接入",
+      "statsDetail": "数据详情页面待接入",
+      "videoLibrary": "视频库页面待接入"
+    },
+    "track": {
+      "dance": "舞蹈",
+      "vocal": "声乐",
+      "korean": "韩语"
+    },
+    "tone": {
+      "friendly": "亲切",
+      "expert": "专业"
+    },
+    "feedbackLabel": {
+      "gentle": "温和",
+      "normal": "普通",
+      "strict": "严格"
+    },
+    "cameraDefault": {
+      "front": "前置",
+      "back": "后置"
+    },
+    "storageDuration": {
+      "days7": "7 天",
+      "days30": "30 天",
+      "unlimited": "无限"
+    },
+    "reportFormat": {
+      "pdf": "PDF",
+      "image": "图片"
+    },
+    "buttons": {
+      "saveVideos": "查看已保存视频",
+      "export": "导出"
+    },
+    "labels": {
+      "usage": "使用量",
+      "sessions": "次数",
+      "minutes": "练习分钟",
+      "avgScore": "平均 AI 分数",
+      "maxTracksNotice": "最多可启用 3 条轨道",
+      "permissionGranted": "已授予权限",
+      "permissionDenied": "需要检查权限"
+    },
+    "days": {
+      "mon": "一",
+      "tue": "二",
+      "wed": "三",
+      "thu": "四",
+      "fri": "五",
+      "sat": "六",
+      "sun": "日"
+    },
+    "toast": {
+      "upgradeSuccess": "高级升级已生效",
+      "cancelSuccess": "已取消订阅",
+      "snsConnected": "社交账号连接成功",
+      "snsDisconnected": "社交账号已断开",
+      "requestFailed": "请求失败",
+      "exportSuccess": "报告已导出",
+      "planGenerated": "周计划已生成",
+      "dataDeleted": "数据删除请求已完成"
+    }
+  },
+  "nav": {
+    "home": "首页",
+    "chat": "聊天",
+    "aicoach": "AI 教练",
+    "discover": "发现",
+    "mypage": "我的主页",
+    "community": "社区",
+    "dance": "舞蹈",
+    "vocal": "声乐",
+    "korean": "韩语 AI",
+    "notifications": "通知",
+    "settings": "设置"
+  },
+  "home": {
+    "heroTag": "AI K-POP 教练",
+    "heroTitleLine1": "学习 K-POP 最聪明的方式,",
+    "heroTitleLine2": "ONNODE",
+    "heroSubtitle": "AI 实时分析您的舞蹈、声乐和韩语,并立即给出反馈。",
+    "heroSubtitle2": "立即开始练习。",
+    "startBtn": "🔥 开始今日练习",
+    "selectTrack": "选择我的轨道",
+    "myStatus": "我的状态",
+    "currentLevel": "当前等级",
+    "streakDays": "连续练习",
+    "recentScore": "最近 AI 分数",
+    "unitLv": "Lv",
+    "unitDays": "天",
+    "unitScore": "分",
+    "quickStart": "快速开始",
+    "danceTitle": "舞蹈训练",
+    "danceDesc": "基于 YouTube 的编舞分析 · AI 姿态反馈",
+    "danceBadge": "舞蹈训练",
+    "vocalTitle": "声乐训练",
+    "vocalDesc": "实时分析音准、节奏与发声",
+    "vocalBadge": "声乐训练",
+    "koreanTitle": "韩语 AI",
+    "koreanDesc": "用 K-POP 歌词练习发音与会话",
+    "koreanBadge": "韩语 AI"
+  },
+  "leftPanel": {
+    "myPage": "我的主页",
+    "training": "训练",
+    "profile": "个人资料",
+    "growth": "成长曲线",
+    "goals": "目标",
+    "savedVideos": "已保存视频",
+    "feedbackHistory": "AI 反馈记录",
+    "danceTraining": "舞蹈训练",
+    "vocalTraining": "声乐训练",
+    "koreanAI": "韩语 AI",
+    "discover": "发现",
+    "trending": "趋势",
+    "popularDance": "热门编舞",
+    "popularSongs": "热门歌曲",
+    "koreanContent": "韩语内容",
+    "challenges": "挑战",
+    "aiCoach": "AI 教练",
+    "todayPick": "今日推荐",
+    "weakness": "弱点分析",
+    "routine": "定制训练",
+    "coaching": "目标导向指导",
+    "noConversations": "暂无会话。"
+  },
+  "report": {
+    "filterAll": "全部",
+    "trackDance": "舞蹈",
+    "trackVocal": "声乐",
+    "trackKorean": "韩语",
+    "trackReportSuffix": "报告",
+    "loadMore": "加载更多",
+    "emptyTitle": "暂无报告",
+    "emptyCta": "开始第一次练习 →",
+    "viewDetail": "查看详情 →",
+    "aiOneLine": "AI 一句话点评",
+    "overallScore": "综合得分",
+    "sections": {
+      "summary": "整体结果",
+      "feedback": "AI 反馈",
+      "timeline": "分段分析",
+      "routine": "推荐训练",
+      "content": "您可能还喜欢"
+    },
+    "routineCardTitle": "AI 推荐训练",
+    "routineCardSub": "基于本报告",
+    "startRoutine": "开始此训练",
+    "practiceAgain": "再次练习",
+    "back": "返回",
+    "estMin": "约 {{min}} 分钟",
+    "score": "{{value}}",
+    "noTimeline": "暂无分段数据。",
+    "dayLabel": "第 {{day}} 天",
+    "scoreLabel": {
+      "posture": "姿态准确度",
+      "rhythm": "节奏准确度",
+      "completion": "动作完成度",
+      "expression": "表现力",
+      "pitch": "音准准确度",
+      "tempo": "速度准确度",
+      "voice": "发声",
+      "emotion": "情感",
+      "pronunciation": "发音",
+      "intonation": "语调",
+      "fluency": "流利度",
+      "vocabulary": "词汇"
+    }
+  },
+  "discoverNew": {
+    "categories": {
+      "all": "全部",
+      "trending": "趋势",
+      "dance": "热门编舞",
+      "songs": "热门歌曲",
+      "challenges": "挑战",
+      "korean": "韩语"
+    },
+    "sections": {
+      "trending": "趋势",
+      "popularDance": "热门编舞",
+      "popularSongs": "热门歌曲",
+      "challenges": "挑战",
+      "korean": "韩语内容"
+    },
+    "actions": {
+      "practice": "练习",
+      "sing": "演唱",
+      "join": "参与",
+      "open": "打开"
+    },
+    "labels": {
+      "updatedWeekly": "每周更新",
+      "updatedAt": "更新于 {{date}}",
+      "participants": "{{count}} 人参与",
+      "deadline": "{{date}} 截止",
+      "bpm": "{{bpm}} BPM",
+      "level": "Lv {{level}}",
+      "duration": "{{duration}}",
+      "difficulty": {
+        "easy": "简单",
+        "normal": "普通",
+        "hard": "困难"
+      }
+    },
+    "empty": "正在加载内容..."
+  },
   "views": {
-    "aicoach": "AI COACH"
+    "mypage": "我的主页",
+    "aicoach": "AI 教练"
+  },
+  "common": {
+    "more": "更多"
   },
   "aicoach": {
     "loading": "AI 教练正在生成回复...",
     "placeholder": "发送消息..."
+  },
+  "mypage": {
+    "nickname": "ONNODE STAR",
+    "joinedAt": "加入日期: 2025.09.10",
+    "levelText": "Lv.12 · 新星",
+    "today": "今日",
+    "sessions": "次数",
+    "totalTime": "总时长",
+    "avgScore": "平均分数",
+    "streak": "连续天数",
+    "startPractice": "开始练习",
+    "growth": "成长曲线",
+    "feedbackHistory": "AI 反馈记录",
+    "feedbackSummary": "节奏稳定,手臂伸展需要改进。",
+    "savedVideos": "已保存视频",
+    "videoMenu": "分享 | 删除",
+    "goalProgress": "目标进度",
+    "goalWeekly": "本周练习 5 次",
+    "goalVocal": "发声呼吸 4 次",
+    "goalKorean": "10 个韩语句子",
+    "addGoal": "添加目标"
+  },
+  "discover": {
+    "tabs": {
+      "all": "全部",
+      "dance": "舞蹈",
+      "vocal": "声乐",
+      "korean": "韩语",
+      "challenge": "挑战"
+    },
+    "heroTitle": "为您精选",
+    "practiceNow": "立即练习",
+    "popularDance": "热门编舞",
+    "startPractice": "练习",
+    "popularVocal": "热门歌曲",
+    "singNow": "演唱",
+    "koreanContent": "韩语学习",
+    "challenges": "挑战",
+    "join": "参与",
+    "trendingVideos": "热门视频",
+    "openPlayer": "打开",
+    "rowItem": "内容",
+    "listItem": "课程"
+  },
+  "community": {
+    "search": "搜索聊天...",
+    "tabs": {
+      "dm": "私信",
+      "group": "群聊"
+    },
+    "newChat": "新建聊天",
+    "newChatPlaceholder": "昵称或群组名称",
+    "create": "创建",
+    "empty": "选择一个对话",
+    "online": "在线",
+    "offline": "离线",
+    "uploading": "上传中...",
+    "messagePlaceholder": "发送消息...",
+    "attach": {
+      "image": "选择照片",
+      "video": "选择视频",
+      "camera": "打开相机"
+    }
+  },
+  "dance": {
+    "youtubePlaceholder": "输入 YouTube 链接",
+    "load": "加载",
+    "emptyVideo": "添加视频链接以开始",
+    "speed": "播放速度",
+    "mirror": "镜像模式",
+    "difficulty": "AI 难度",
+    "levels": {
+      "beginner": "入门",
+      "elementary": "初级",
+      "intermediate": "中级",
+      "advanced": "高级",
+      "pro": "专业"
+    },
+    "cameraLive": "摄像头实时画面",
+    "liveFeedback": "实时姿态反馈",
+    "summary": {
+      "total": "总分",
+      "best": "最佳瞬间",
+      "needs": "需要改进"
+    },
+    "retry": "重试",
+    "save": "保存",
+    "share": "分享到社区"
+  },
+  "vocal": {
+    "searchSong": "搜索歌曲或艺人",
+    "tabs": {
+      "myUpload": "我的上传",
+      "popular": "热门",
+      "discover": "发现"
+    },
+    "record": "录音",
+    "stop": "停止",
+    "liveScore": "实时评分",
+    "line1": "今天也要在舞台上闪耀",
+    "line2": "我们的节奏融为一体",
+    "line3": "深呼吸后重新开始",
+    "line4": "一直准确地唱到最后",
+    "result": "录音结果",
+    "pitch": "音准",
+    "rhythm": "节奏",
+    "voice": "发声",
+    "emotion": "情感",
+    "aiComment": "呼吸稳定。请在副歌高音处稍微提升共鸣位置。",
+    "retry": "重试",
+    "save": "保存",
+    "share": "分享给朋友"
+  },
+  "korean": {
+    "modes": {
+      "pronunciation": "发音",
+      "follow": "跟读",
+      "correction": "AI 纠正",
+      "lyricsVocab": "歌词词汇"
+    },
+    "sampleSentence": "今天也用清晰的发音和节奏练习吧。",
+    "toggleRomanized": "罗马音开关",
+    "toggleTranslation": "翻译开关",
+    "record": "录音",
+    "syllableFeedback": "音节反馈将显示在此处。",
+    "followTitle": "跟读模式",
+    "lineLabel": "第 {{idx}} 句",
+    "nativePlay": "播放原声",
+    "correctionTitle": "AI 发音纠正",
+    "correctionUser": "今天天气非常 joayo。",
+    "correctionAI": "请使用 'jo-a-yo'。中间元音发音要更清晰。",
+    "vocabTitle": "歌词词汇学习"
+  },
+  "notifications": {
+    "filters": {
+      "all": "全部",
+      "aicoach": "AI 教练",
+      "challenge": "挑战",
+      "community": "社区"
+    },
+    "markAllRead": "全部标为已读",
+    "aiTitle": "🔥 你好 ONNODE STAR!",
+    "aiMessage": "您今天还没有练习声乐。现在练习 10 分钟如何?",
+    "practiceNow": "立即练习",
+    "goalTitle": "🎉 目标达成!",
+    "goalMessage": "您本周完成了 5 次练习!",
+    "nextGoal": "设置下一个目标",
+    "recommendTitle": "🎵 新推荐",
+    "recommendMessage": "此内容与您当前等级相符。",
+    "start": "开始",
+    "changeSettings": "更改通知设置 →"
   }
 }

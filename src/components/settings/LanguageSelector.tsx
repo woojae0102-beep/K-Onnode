@@ -6,11 +6,11 @@ const options = [
   { value: 'ko', label: '한국어', flag: '🇰🇷', enabled: true },
   { value: 'en', label: 'English', flag: '🇺🇸', enabled: true },
   { value: 'ja', label: '日本語', flag: '🇯🇵', enabled: true },
-  { value: 'zh', label: '中文', flag: '🇨🇳', enabled: false },
-  { value: 'es', label: 'Español', flag: '🇪🇸', enabled: false },
-  { value: 'fr', label: 'Français', flag: '🇫🇷', enabled: false },
-  { value: 'vi', label: 'Tiếng Việt', flag: '🇻🇳', enabled: false },
-  { value: 'th', label: 'ไทย', flag: '🇹🇭', enabled: false },
+  { value: 'zh', label: '中文', flag: '🇨🇳', enabled: true },
+  { value: 'es', label: 'Español', flag: '🇪🇸', enabled: true },
+  { value: 'fr', label: 'Français', flag: '🇫🇷', enabled: true },
+  { value: 'vi', label: 'Tiếng Việt', flag: '🇻🇳', enabled: true },
+  { value: 'th', label: 'ไทย', flag: '🇹🇭', enabled: true },
 ];
 
 export default function LanguageSelector({ value, onChange, open, onOpen, onClose }) {

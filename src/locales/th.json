@@ -1,9 +1,484 @@
 {
+  "settings": {
+    "title": "ตั้งค่า",
+    "subtitle": "ปรับประสบการณ์ ONNODE AI COACH ของคุณ",
+    "sections": {
+      "profile": "โปรไฟล์และบัญชี",
+      "aiCoach": "ตั้งค่า AI Coach",
+      "recording": "การบันทึกและวิเคราะห์",
+      "business": "ธุรกิจและเชื่อมต่อบัญชี",
+      "notifications": "การแจ้งเตือนและกิจวัตร",
+      "app": "แอปและความเป็นส่วนตัว"
+    },
+    "myProfile": "โปรไฟล์ของฉัน",
+    "trackSelection": "เลือกแทร็ก",
+    "myStats": "สถิติของฉัน",
+    "coachLanguageTone": "ภาษาและโทนของโค้ช",
+    "feedbackSensitivity": "ความไวของฟีดแบ็ก",
+    "coachMode": {
+      "title": "โหมดโค้ช",
+      "modeBadge": "โหมด AI Coach",
+      "options": {
+        "single": "โค้ชเดี่ยว",
+        "multi": "มัลติโค้ช",
+        "free": "ฝึกอิสระ"
+      }
+    },
+    "micCamera": "ไมค์และกล้อง",
+    "videoStorage": "พื้นที่เก็บวิดีโอ",
+    "exportReport": "ส่งออกรายงาน",
+    "subscription": {
+      "premiumPlan": "แพ็กเกจพรีเมียม",
+      "premium": "แพ็กเกจพรีเมียม",
+      "freePlan": "แพ็กเกจฟรี",
+      "free": "แพ็กเกจฟรี",
+      "active": "กำลังใช้งาน",
+      "nextBilling": "เรียกเก็บครั้งถัดไป",
+      "changePayment": "เปลี่ยนวิธีชำระ",
+      "changePlan": "เปลี่ยนแพ็กเกจ",
+      "cancel": "ยกเลิกการสมัคร",
+      "upgrade": "อัปเกรดเป็นพรีเมียม",
+      "freeDesc": "จำกัด 3 เพลง · ฟีดแบ็กพื้นฐานเท่านั้น",
+      "paddleNotReady": "ระบบชำระ Paddle ยังไม่พร้อม",
+      "paymentScreenFallback": "อยู่ระหว่างเชื่อมต่อหน้าจอชำระเงิน",
+      "upgradeModalTitle": "ฟีเจอร์พรีเมียม",
+      "cancelConfirmTitle": "ยกเลิกการสมัครใช่ไหม?",
+      "cancelConfirmDesc": "สิทธิ์พรีเมียมจะสิ้นสุดในรอบเรียกเก็บถัดไป",
+      "premiumFeatures": {
+        "songs": "เลือกเพลงไม่จำกัด",
+        "report": "รายงานการวิเคราะห์ AI แบบละเอียด (PDF)",
+        "multiCoach": "โหมดมัลติโค้ช",
+        "video": "พื้นที่เก็บวิดีโอไม่จำกัด",
+        "ranking": "เข้าร่วมแรงค์กิ้งทั่วโลก"
+      }
+    },
+    "sns": {
+      "title": "เชื่อมต่อบัญชีโซเชียล",
+      "connect": "เชื่อมต่อ",
+      "connected": "เชื่อมต่อแล้ว",
+      "disconnect": "ยกเลิกการเชื่อมต่อ",
+      "disconnected": "ยังไม่ได้เชื่อมต่อ",
+      "exportHint": "แพลตฟอร์มที่ส่งออกวิดีโอได้",
+      "platforms": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "twitter": "Twitter/X"
+      }
+    },
+    "language": {
+      "title": "ภาษา",
+      "comingSoon": "เร็ว ๆ นี้"
+    },
+    "notifications": {
+      "practiceReminder": "เตือนฝึกซ้อม"
+    },
+    "routine": {
+      "title": "แผนรายสัปดาห์ AI",
+      "recommended": "แนะนำ",
+      "generate": "สร้างกิจวัตรรายสัปดาห์ด้วย AI",
+      "morning": "เช้า",
+      "evening": "เย็น",
+      "empty": "ว่าง",
+      "slotPrompt": "ใส่เนื้อหาสำหรับช่วงเวลานี้"
+    },
+    "privacy": {
+      "title": "ความเป็นส่วนตัวและข้อมูล",
+      "deleteData": "ลบข้อมูลของฉัน",
+      "withdraw": "ลบบัญชี",
+      "deleteConfirmTitle": "ลบข้อมูลของคุณ?",
+      "deleteConfirmDesc": "ข้อมูลที่ลบจะไม่สามารถกู้คืนได้",
+      "withdrawConfirmTitle": "ลบบัญชีนี้?",
+      "withdrawConfirmDesc": "ประวัติการเรียนทั้งหมดจะถูกลบ"
+    },
+    "help": {
+      "title": "ช่วยเหลือและติดต่อ",
+      "faq": "คำถามที่พบบ่อย",
+      "contact": "ติดต่อแบบ 1:1"
+    },
+    "record": {
+      "micSensitivity": "ความไวไมค์",
+      "noiseFilter": "กรองเสียงรบกวนพื้นหลัง",
+      "permissionCheck": "ตรวจสอบสิทธิ์",
+      "autoSave": "บันทึกอัตโนมัติ"
+    },
+    "common": {
+      "on": "เปิด",
+      "off": "ปิด",
+      "close": "ปิด"
+    },
+    "report": {
+      "title": "รายงาน ONNODE"
+    },
+    "navigation": {
+      "profileEdit": "รอเชื่อมต่อหน้าจอแก้ไขโปรไฟล์",
+      "statsDetail": "รอเชื่อมต่อหน้าจอรายละเอียดสถิติ",
+      "videoLibrary": "รอเชื่อมต่อคลังวิดีโอ"
+    },
+    "track": {
+      "dance": "เต้น",
+      "vocal": "ร้อง",
+      "korean": "เกาหลี"
+    },
+    "tone": {
+      "friendly": "เป็นกันเอง",
+      "expert": "ผู้เชี่ยวชาญ"
+    },
+    "feedbackLabel": {
+      "gentle": "อ่อนโยน",
+      "normal": "ปกติ",
+      "strict": "เข้มงวด"
+    },
+    "cameraDefault": {
+      "front": "หน้า",
+      "back": "หลัง"
+    },
+    "storageDuration": {
+      "days7": "7 วัน",
+      "days30": "30 วัน",
+      "unlimited": "ไม่จำกัด"
+    },
+    "reportFormat": {
+      "pdf": "PDF",
+      "image": "รูปภาพ"
+    },
+    "buttons": {
+      "saveVideos": "ดูวิดีโอที่บันทึกไว้",
+      "export": "ส่งออก"
+    },
+    "labels": {
+      "usage": "การใช้งาน",
+      "sessions": "เซสชัน",
+      "minutes": "นาทีฝึก",
+      "avgScore": "คะแนน AI เฉลี่ย",
+      "maxTracksNotice": "เปิดใช้ได้สูงสุด 3 แทร็ก",
+      "permissionGranted": "ได้รับอนุญาต",
+      "permissionDenied": "ต้องตรวจสอบสิทธิ์"
+    },
+    "days": {
+      "mon": "จ",
+      "tue": "อ",
+      "wed": "พ",
+      "thu": "พฤ",
+      "fri": "ศ",
+      "sat": "ส",
+      "sun": "อา"
+    },
+    "toast": {
+      "upgradeSuccess": "อัปเกรดพรีเมียมสำเร็จ",
+      "cancelSuccess": "ยกเลิกการสมัครแล้ว",
+      "snsConnected": "เชื่อมต่อโซเชียลสำเร็จ",
+      "snsDisconnected": "ยกเลิกการเชื่อมต่อโซเชียลแล้ว",
+      "requestFailed": "คำขอไม่สำเร็จ",
+      "exportSuccess": "ส่งออกรายงานแล้ว",
+      "planGenerated": "สร้างแผนรายสัปดาห์แล้ว",
+      "dataDeleted": "ดำเนินการลบข้อมูลแล้ว"
+    }
+  },
+  "nav": {
+    "home": "หน้าแรก",
+    "chat": "แชท",
+    "aicoach": "AI Coach",
+    "discover": "สำรวจ",
+    "mypage": "เพจของฉัน",
+    "community": "คอมมูนิตี้",
+    "dance": "เต้น",
+    "vocal": "ร้อง",
+    "korean": "เกาหลี AI",
+    "notifications": "การแจ้งเตือน",
+    "settings": "ตั้งค่า"
+  },
+  "home": {
+    "heroTag": "AI K-POP COACH",
+    "heroTitleLine1": "วิธีที่ฉลาดที่สุดในการเรียน K-POP,",
+    "heroTitleLine2": "ONNODE",
+    "heroSubtitle": "AI วิเคราะห์การเต้น เสียงร้อง และภาษาเกาหลีแบบเรียลไทม์และให้ฟีดแบ็กทันที",
+    "heroSubtitle2": "เริ่มฝึกได้ทันที",
+    "startBtn": "🔥 เริ่มฝึกของวันนี้",
+    "selectTrack": "เลือกแทร็กของฉัน",
+    "myStatus": "สถานะของฉัน",
+    "currentLevel": "ระดับปัจจุบัน",
+    "streakDays": "สตรีคการฝึก",
+    "recentScore": "คะแนน AI ล่าสุด",
+    "unitLv": "Lv",
+    "unitDays": "วัน",
+    "unitScore": "คะแนน",
+    "quickStart": "เริ่มด่วน",
+    "danceTitle": "ฝึกเต้น",
+    "danceDesc": "วิเคราะห์ท่าเต้นจาก YouTube · ฟีดแบ็กท่าทางด้วย AI",
+    "danceBadge": "ฝึกเต้น",
+    "vocalTitle": "ฝึกร้อง",
+    "vocalDesc": "วิเคราะห์ระดับเสียง จังหวะ และการออกเสียงแบบเรียลไทม์",
+    "vocalBadge": "ฝึกร้อง",
+    "koreanTitle": "เกาหลี AI",
+    "koreanDesc": "ฝึกออกเสียงและบทสนทนาผ่านเนื้อเพลง K-POP",
+    "koreanBadge": "เกาหลี AI"
+  },
+  "leftPanel": {
+    "myPage": "เพจของฉัน",
+    "training": "ฝึกซ้อม",
+    "profile": "โปรไฟล์",
+    "growth": "กราฟพัฒนาการ",
+    "goals": "เป้าหมาย",
+    "savedVideos": "วิดีโอที่บันทึก",
+    "feedbackHistory": "ประวัติฟีดแบ็ก AI",
+    "danceTraining": "ฝึกเต้น",
+    "vocalTraining": "ฝึกร้อง",
+    "koreanAI": "เกาหลี AI",
+    "discover": "สำรวจ",
+    "trending": "กำลังฮิต",
+    "popularDance": "ท่าเต้นยอดนิยม",
+    "popularSongs": "เพลงยอดนิยม",
+    "koreanContent": "คอนเทนต์เกาหลี",
+    "challenges": "ชาเลนจ์",
+    "aiCoach": "AI COACH",
+    "todayPick": "แนะนำวันนี้",
+    "weakness": "วิเคราะห์จุดอ่อน",
+    "routine": "กิจวัตรส่วนตัว",
+    "coaching": "โค้ชตามเป้าหมาย",
+    "noConversations": "ยังไม่มีการสนทนา"
+  },
+  "report": {
+    "filterAll": "ทั้งหมด",
+    "trackDance": "เต้น",
+    "trackVocal": "ร้อง",
+    "trackKorean": "เกาหลี",
+    "trackReportSuffix": "รายงาน",
+    "loadMore": "โหลดเพิ่ม",
+    "emptyTitle": "ยังไม่มีรายงาน",
+    "emptyCta": "เริ่มฝึกครั้งแรก →",
+    "viewDetail": "ดูรายละเอียด →",
+    "aiOneLine": "คอมเมนต์ AI",
+    "overallScore": "คะแนนรวม",
+    "sections": {
+      "summary": "ผลลัพธ์รวม",
+      "feedback": "ฟีดแบ็ก AI",
+      "timeline": "วิเคราะห์รายช่วง",
+      "routine": "กิจวัตรแนะนำ",
+      "content": "คุณอาจชอบสิ่งนี้"
+    },
+    "routineCardTitle": "กิจวัตรที่ AI แนะนำ",
+    "routineCardSub": "อ้างอิงจากรายงานนี้",
+    "startRoutine": "เริ่มกิจวัตรนี้",
+    "practiceAgain": "ฝึกอีกครั้ง",
+    "back": "ย้อนกลับ",
+    "estMin": "~{{min}} นาที",
+    "score": "{{value}}",
+    "noTimeline": "ไม่มีข้อมูลไทม์ไลน์",
+    "dayLabel": "วันที่ {{day}}",
+    "scoreLabel": {
+      "posture": "ความแม่นยำท่าทาง",
+      "rhythm": "ความแม่นยำจังหวะ",
+      "completion": "ความสมบูรณ์ของท่า",
+      "expression": "การแสดงออก",
+      "pitch": "ความแม่นยำระดับเสียง",
+      "tempo": "ความแม่นยำเทมโป",
+      "voice": "การออกเสียง",
+      "emotion": "อารมณ์",
+      "pronunciation": "การออกเสียง",
+      "intonation": "น้ำเสียง",
+      "fluency": "ความคล่อง",
+      "vocabulary": "คำศัพท์"
+    }
+  },
+  "discoverNew": {
+    "categories": {
+      "all": "ทั้งหมด",
+      "trending": "กำลังฮิต",
+      "dance": "ท่าเต้นยอดนิยม",
+      "songs": "เพลงยอดนิยม",
+      "challenges": "ชาเลนจ์",
+      "korean": "เกาหลี"
+    },
+    "sections": {
+      "trending": "กำลังฮิต",
+      "popularDance": "ท่าเต้นยอดนิยม",
+      "popularSongs": "เพลงยอดนิยม",
+      "challenges": "ชาเลนจ์",
+      "korean": "คอนเทนต์เกาหลี"
+    },
+    "actions": {
+      "practice": "ฝึก",
+      "sing": "ร้อง",
+      "join": "เข้าร่วม",
+      "open": "เปิด"
+    },
+    "labels": {
+      "updatedWeekly": "อัปเดตรายสัปดาห์",
+      "updatedAt": "อัปเดต {{date}}",
+      "participants": "{{count}} คนเข้าร่วม",
+      "deadline": "สิ้นสุด {{date}}",
+      "bpm": "{{bpm}} BPM",
+      "level": "Lv {{level}}",
+      "duration": "{{duration}}",
+      "difficulty": {
+        "easy": "ง่าย",
+        "normal": "ปกติ",
+        "hard": "ยาก"
+      }
+    },
+    "empty": "กำลังโหลดเนื้อหา..."
+  },
   "views": {
+    "mypage": "เพจของฉัน",
     "aicoach": "AI COACH"
   },
+  "common": {
+    "more": "เพิ่มเติม"
+  },
   "aicoach": {
-    "loading": "AI Coach กำลังสร้างคำตอบ...",
+    "loading": "AI coach กำลังสร้างคำตอบ...",
     "placeholder": "ส่งข้อความ..."
+  },
+  "mypage": {
+    "nickname": "ONNODE STAR",
+    "joinedAt": "เข้าร่วม: 10.09.2025",
+    "levelText": "Lv.12 · ดาวรุ่ง",
+    "today": "วันนี้",
+    "sessions": "เซสชัน",
+    "totalTime": "เวลารวม",
+    "avgScore": "คะแนนเฉลี่ย",
+    "streak": "สตรีค",
+    "startPractice": "เริ่มฝึก",
+    "growth": "กราฟพัฒนาการ",
+    "feedbackHistory": "ประวัติฟีดแบ็ก AI",
+    "feedbackSummary": "เทมโปนิ่งดี ต้องปรับการยืดแขนอีกนิด",
+    "savedVideos": "วิดีโอที่บันทึก",
+    "videoMenu": "แชร์ | ลบ",
+    "goalProgress": "ความคืบหน้าเป้าหมาย",
+    "goalWeekly": "ฝึก 5 ครั้งใน 1 สัปดาห์",
+    "goalVocal": "ฝึกลมหายใจร้อง 4 ครั้ง",
+    "goalKorean": "ประโยคเกาหลี 10 ประโยค",
+    "addGoal": "เพิ่มเป้าหมาย"
+  },
+  "discover": {
+    "tabs": {
+      "all": "ทั้งหมด",
+      "dance": "เต้น",
+      "vocal": "ร้อง",
+      "korean": "เกาหลี",
+      "challenge": "ชาเลนจ์"
+    },
+    "heroTitle": "แนะนำสำหรับคุณ",
+    "practiceNow": "ฝึกเลย",
+    "popularDance": "ท่าเต้นยอดนิยม",
+    "startPractice": "ฝึก",
+    "popularVocal": "เพลงยอดนิยม",
+    "singNow": "ร้อง",
+    "koreanContent": "เรียนเกาหลี",
+    "challenges": "ชาเลนจ์",
+    "join": "เข้าร่วม",
+    "trendingVideos": "วิดีโอกำลังฮิต",
+    "openPlayer": "เปิด",
+    "rowItem": "คอนเทนต์",
+    "listItem": "บทเรียน"
+  },
+  "community": {
+    "search": "ค้นหาแชท...",
+    "tabs": {
+      "dm": "DM",
+      "group": "กลุ่ม"
+    },
+    "newChat": "แชทใหม่",
+    "newChatPlaceholder": "ชื่อผู้ใช้หรือชื่อกลุ่ม",
+    "create": "สร้าง",
+    "empty": "เลือกการสนทนา",
+    "online": "ออนไลน์",
+    "offline": "ออฟไลน์",
+    "uploading": "กำลังอัปโหลด...",
+    "messagePlaceholder": "ส่งข้อความ...",
+    "attach": {
+      "image": "เลือกรูปภาพ",
+      "video": "เลือกวิดีโอ",
+      "camera": "เปิดกล้อง"
+    }
+  },
+  "dance": {
+    "youtubePlaceholder": "ใส่ URL YouTube",
+    "load": "โหลด",
+    "emptyVideo": "ใส่ URL วิดีโอเพื่อเริ่มต้น",
+    "speed": "ความเร็วเล่น",
+    "mirror": "โหมดกระจก",
+    "difficulty": "ระดับความยาก AI",
+    "levels": {
+      "beginner": "มือใหม่",
+      "elementary": "เริ่มต้น",
+      "intermediate": "กลาง",
+      "advanced": "สูง",
+      "pro": "มืออาชีพ"
+    },
+    "cameraLive": "สดจากกล้อง",
+    "liveFeedback": "ฟีดแบ็กท่าทางแบบเรียลไทม์",
+    "summary": {
+      "total": "คะแนนรวม",
+      "best": "ช่วงดีที่สุด",
+      "needs": "ต้องปรับปรุง"
+    },
+    "retry": "ลองใหม่",
+    "save": "บันทึก",
+    "share": "แชร์สู่คอมมูนิตี้"
+  },
+  "vocal": {
+    "searchSong": "ค้นหาเพลงหรือศิลปิน",
+    "tabs": {
+      "myUpload": "ของฉัน",
+      "popular": "ยอดนิยม",
+      "discover": "สำรวจ"
+    },
+    "record": "อัดเสียง",
+    "stop": "หยุด",
+    "liveScore": "คะแนนสด",
+    "line1": "วันนี้ส่องประกายบนเวที",
+    "line2": "จังหวะของเราเป็นหนึ่งเดียว",
+    "line3": "ปรับลมหายใจแล้วเริ่มใหม่",
+    "line4": "ร้องให้ตรงจนจบเพลง",
+    "result": "ผลลัพธ์การอัด",
+    "pitch": "ระดับเสียง",
+    "rhythm": "จังหวะ",
+    "voice": "เสียง",
+    "emotion": "อารมณ์",
+    "aiComment": "ลมหายใจนิ่งดี ในท่อนฮุคลองยกตำแหน่งเรโซแนนซ์ขึ้นอีกนิด",
+    "retry": "ลองใหม่",
+    "save": "บันทึก",
+    "share": "แชร์ให้เพื่อน"
+  },
+  "korean": {
+    "modes": {
+      "pronunciation": "ออกเสียง",
+      "follow": "พูดตาม",
+      "correction": "แก้ไขด้วย AI",
+      "lyricsVocab": "คำศัพท์เนื้อเพลง"
+    },
+    "sampleSentence": "วันนี้มาฝึกด้วยการออกเสียงและจังหวะที่ชัดเจนกันเถอะ",
+    "toggleRomanized": "เปิด/ปิดโรมาจิ",
+    "toggleTranslation": "เปิด/ปิดคำแปล",
+    "record": "อัดเสียง",
+    "syllableFeedback": "ฟีดแบ็กรายพยางค์จะปรากฏที่นี่",
+    "followTitle": "โหมดพูดตาม",
+    "lineLabel": "บรรทัด {{idx}}",
+    "nativePlay": "ฟังเสียงเจ้าของภาษา",
+    "correctionTitle": "แก้ไขการออกเสียงด้วย AI",
+    "correctionUser": "วันนี้อากาศดี joayo",
+    "correctionAI": "ใช้ 'jo-a-yo' และออกเสียงสระกลางให้ชัดขึ้น",
+    "vocabTitle": "เรียนคำศัพท์จากเนื้อเพลง"
+  },
+  "notifications": {
+    "filters": {
+      "all": "ทั้งหมด",
+      "aicoach": "AI Coach",
+      "challenge": "ชาเลนจ์",
+      "community": "คอมมูนิตี้"
+    },
+    "markAllRead": "ทำเครื่องหมายอ่านทั้งหมด",
+    "aiTitle": "🔥 สวัสดี ONNODE STAR!",
+    "aiMessage": "วันนี้ยังไม่ได้ฝึกร้องเลย ฝึก 10 นาทีกันไหม?",
+    "practiceNow": "ฝึกเลย",
+    "goalTitle": "🎉 ทำสำเร็จ!",
+    "goalMessage": "คุณทำได้ครบ 5 เซสชันในสัปดาห์นี้!",
+    "nextGoal": "ตั้งเป้าหมายถัดไป",
+    "recommendTitle": "🎵 แนะนำใหม่",
+    "recommendMessage": "คอนเทนต์นี้เหมาะกับระดับปัจจุบันของคุณ",
+    "start": "เริ่ม",
+    "changeSettings": "เปลี่ยนการตั้งค่าการแจ้งเตือน →"
   }
 }

@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import TopNavBar from './layout/TopNavBar';
 import LeftPanel from './layout/LeftPanel';
 import TabBar from './layout/TabBar';
+import MobileSectionBar from './layout/MobileSectionBar';
 import NewChatModal from './community/NewChatModal';
 import { useRealtimeChat } from '../hooks/useRealtimeChat';
 
@@ -208,10 +209,15 @@ export default function Layout(props) {
         />
 
         <main
-          className="flex-1 min-w-0 overflow-y-auto"
+          className="flex-1 min-w-0 overflow-y-auto flex flex-col"
           style={{ background: '#F5F5F7' }}
         >
-          {renderMainContent()}
+          <MobileSectionBar
+            activeTab={activeTab}
+            mainView={mainView}
+            onSelectView={handleSelectView}
+          />
+          <div className="flex-1 min-h-0">{renderMainContent()}</div>
         </main>
       </div>
 

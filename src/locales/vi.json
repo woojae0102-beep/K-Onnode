@@ -1,9 +1,484 @@
 {
+  "settings": {
+    "title": "Cài đặt",
+    "subtitle": "Tùy chỉnh trải nghiệm ONNODE AI COACH của bạn",
+    "sections": {
+      "profile": "Hồ sơ & tài khoản",
+      "aiCoach": "Cài đặt AI Coach",
+      "recording": "Ghi hình & phân tích",
+      "business": "Kinh doanh & liên kết tài khoản",
+      "notifications": "Thông báo & lịch trình",
+      "app": "Ứng dụng & quyền riêng tư"
+    },
+    "myProfile": "Hồ sơ của tôi",
+    "trackSelection": "Chọn bộ môn",
+    "myStats": "Thống kê của tôi",
+    "coachLanguageTone": "Ngôn ngữ & giọng điệu coach",
+    "feedbackSensitivity": "Độ nhạy phản hồi",
+    "coachMode": {
+      "title": "Chế độ coach",
+      "modeBadge": "Chế độ AI Coach",
+      "options": {
+        "single": "Coach đơn",
+        "multi": "Multi coach",
+        "free": "Luyện tập tự do"
+      }
+    },
+    "micCamera": "Micro & camera",
+    "videoStorage": "Lưu trữ video",
+    "exportReport": "Xuất báo cáo",
+    "subscription": {
+      "premiumPlan": "Gói Premium",
+      "premium": "Gói Premium",
+      "freePlan": "Gói miễn phí",
+      "free": "Gói miễn phí",
+      "active": "Đang dùng",
+      "nextBilling": "Lần thanh toán tiếp theo",
+      "changePayment": "Đổi phương thức thanh toán",
+      "changePlan": "Đổi gói",
+      "cancel": "Hủy đăng ký",
+      "upgrade": "Nâng cấp lên Premium",
+      "freeDesc": "Giới hạn 3 bài · chỉ phản hồi cơ bản",
+      "paddleNotReady": "Thanh toán Paddle chưa sẵn sàng",
+      "paymentScreenFallback": "Tích hợp màn hình thanh toán sắp có",
+      "upgradeModalTitle": "Tính năng Premium",
+      "cancelConfirmTitle": "Hủy đăng ký?",
+      "cancelConfirmDesc": "Quyền Premium sẽ kết thúc vào chu kỳ thanh toán kế tiếp.",
+      "premiumFeatures": {
+        "songs": "Chọn bài không giới hạn",
+        "report": "Báo cáo phân tích AI chi tiết (PDF)",
+        "multiCoach": "Chế độ multi coach",
+        "video": "Lưu trữ video không giới hạn",
+        "ranking": "Tham gia xếp hạng toàn cầu"
+      }
+    },
+    "sns": {
+      "title": "Liên kết mạng xã hội",
+      "connect": "Kết nối",
+      "connected": "Đã kết nối",
+      "disconnect": "Ngắt kết nối",
+      "disconnected": "Chưa kết nối",
+      "exportHint": "Các nền tảng có thể xuất video",
+      "platforms": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "youtube": "YouTube",
+        "twitter": "Twitter/X"
+      }
+    },
+    "language": {
+      "title": "Ngôn ngữ",
+      "comingSoon": "Sắp ra mắt"
+    },
+    "notifications": {
+      "practiceReminder": "Nhắc luyện tập"
+    },
+    "routine": {
+      "title": "Kế hoạch tuần AI",
+      "recommended": "ĐỀ XUẤT",
+      "generate": "Tạo lịch tập hàng tuần bằng AI",
+      "morning": "Sáng",
+      "evening": "Tối",
+      "empty": "Trống",
+      "slotPrompt": "Nhập nội dung cho khung này"
+    },
+    "privacy": {
+      "title": "Quyền riêng tư & dữ liệu",
+      "deleteData": "Xóa dữ liệu của tôi",
+      "withdraw": "Xóa tài khoản",
+      "deleteConfirmTitle": "Xóa dữ liệu?",
+      "deleteConfirmDesc": "Dữ liệu đã xóa không thể khôi phục.",
+      "withdrawConfirmTitle": "Xóa tài khoản này?",
+      "withdrawConfirmDesc": "Toàn bộ lịch sử học tập sẽ bị xóa."
+    },
+    "help": {
+      "title": "Trợ giúp & liên hệ",
+      "faq": "FAQ",
+      "contact": "Hỗ trợ 1:1"
+    },
+    "record": {
+      "micSensitivity": "Độ nhạy micro",
+      "noiseFilter": "Bộ lọc tiếng ồn nền",
+      "permissionCheck": "Kiểm tra quyền",
+      "autoSave": "Tự động lưu"
+    },
+    "common": {
+      "on": "Bật",
+      "off": "Tắt",
+      "close": "Đóng"
+    },
+    "report": {
+      "title": "Báo cáo ONNODE"
+    },
+    "navigation": {
+      "profileEdit": "Tích hợp màn hình chỉnh sửa hồ sơ sắp có",
+      "statsDetail": "Tích hợp màn hình chi tiết thống kê sắp có",
+      "videoLibrary": "Tích hợp thư viện video sắp có"
+    },
+    "track": {
+      "dance": "Nhảy",
+      "vocal": "Hát",
+      "korean": "Tiếng Hàn"
+    },
+    "tone": {
+      "friendly": "Thân thiện",
+      "expert": "Chuyên gia"
+    },
+    "feedbackLabel": {
+      "gentle": "Nhẹ nhàng",
+      "normal": "Bình thường",
+      "strict": "Nghiêm khắc"
+    },
+    "cameraDefault": {
+      "front": "Trước",
+      "back": "Sau"
+    },
+    "storageDuration": {
+      "days7": "7 ngày",
+      "days30": "30 ngày",
+      "unlimited": "Không giới hạn"
+    },
+    "reportFormat": {
+      "pdf": "PDF",
+      "image": "Hình ảnh"
+    },
+    "buttons": {
+      "saveVideos": "Xem video đã lưu",
+      "export": "Xuất"
+    },
+    "labels": {
+      "usage": "Sử dụng",
+      "sessions": "Số buổi",
+      "minutes": "Phút luyện tập",
+      "avgScore": "Điểm AI trung bình",
+      "maxTracksNotice": "Có thể bật tối đa 3 bộ môn",
+      "permissionGranted": "Đã cấp quyền",
+      "permissionDenied": "Cần kiểm tra quyền"
+    },
+    "days": {
+      "mon": "T2",
+      "tue": "T3",
+      "wed": "T4",
+      "thu": "T5",
+      "fri": "T6",
+      "sat": "T7",
+      "sun": "CN"
+    },
+    "toast": {
+      "upgradeSuccess": "Đã nâng cấp Premium",
+      "cancelSuccess": "Đã hủy đăng ký",
+      "snsConnected": "Kết nối mạng xã hội thành công",
+      "snsDisconnected": "Đã ngắt kết nối mạng xã hội",
+      "requestFailed": "Yêu cầu thất bại",
+      "exportSuccess": "Đã xuất báo cáo",
+      "planGenerated": "Đã tạo kế hoạch tuần",
+      "dataDeleted": "Đã xử lý yêu cầu xóa dữ liệu"
+    }
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "chat": "Trò chuyện",
+    "aicoach": "AI Coach",
+    "discover": "Khám phá",
+    "mypage": "TRANG CỦA TÔI",
+    "community": "CỘNG ĐỒNG",
+    "dance": "NHẢY",
+    "vocal": "HÁT",
+    "korean": "TIẾNG HÀN AI",
+    "notifications": "THÔNG BÁO",
+    "settings": "CÀI ĐẶT"
+  },
+  "home": {
+    "heroTag": "AI K-POP COACH",
+    "heroTitleLine1": "Cách thông minh nhất để học K-POP,",
+    "heroTitleLine2": "ONNODE",
+    "heroSubtitle": "AI phân tích nhảy, hát và tiếng Hàn theo thời gian thực và phản hồi ngay lập tức.",
+    "heroSubtitle2": "Bắt đầu luyện tập ngay bây giờ.",
+    "startBtn": "🔥 Bắt đầu buổi tập hôm nay",
+    "selectTrack": "Chọn bộ môn của tôi",
+    "myStatus": "Trạng thái của tôi",
+    "currentLevel": "Cấp độ hiện tại",
+    "streakDays": "Chuỗi luyện tập",
+    "recentScore": "Điểm AI gần đây",
+    "unitLv": "Lv",
+    "unitDays": "ngày",
+    "unitScore": "điểm",
+    "quickStart": "Bắt đầu nhanh",
+    "danceTitle": "Luyện nhảy",
+    "danceDesc": "Phân tích vũ đạo qua YouTube · phản hồi tư thế bằng AI",
+    "danceBadge": "Luyện nhảy",
+    "vocalTitle": "Luyện thanh",
+    "vocalDesc": "Phân tích cao độ, nhịp và phát âm theo thời gian thực",
+    "vocalBadge": "Luyện thanh",
+    "koreanTitle": "Tiếng Hàn AI",
+    "koreanDesc": "Luyện phát âm và hội thoại qua lời bài hát K-POP",
+    "koreanBadge": "Tiếng Hàn AI"
+  },
+  "leftPanel": {
+    "myPage": "TRANG CỦA TÔI",
+    "training": "Luyện tập",
+    "profile": "Hồ sơ",
+    "growth": "Biểu đồ tiến bộ",
+    "goals": "Mục tiêu",
+    "savedVideos": "Video đã lưu",
+    "feedbackHistory": "Lịch sử phản hồi AI",
+    "danceTraining": "Luyện nhảy",
+    "vocalTraining": "Luyện thanh",
+    "koreanAI": "Tiếng Hàn AI",
+    "discover": "KHÁM PHÁ",
+    "trending": "Thịnh hành",
+    "popularDance": "Vũ đạo phổ biến",
+    "popularSongs": "Bài hát phổ biến",
+    "koreanContent": "Nội dung tiếng Hàn",
+    "challenges": "Thử thách",
+    "aiCoach": "AI COACH",
+    "todayPick": "Gợi ý hôm nay",
+    "weakness": "Phân tích điểm yếu",
+    "routine": "Lịch tập tùy chỉnh",
+    "coaching": "Huấn luyện theo mục tiêu",
+    "noConversations": "Chưa có cuộc trò chuyện."
+  },
+  "report": {
+    "filterAll": "Tất cả",
+    "trackDance": "Nhảy",
+    "trackVocal": "Hát",
+    "trackKorean": "Tiếng Hàn",
+    "trackReportSuffix": "báo cáo",
+    "loadMore": "Tải thêm",
+    "emptyTitle": "Chưa có báo cáo",
+    "emptyCta": "Bắt đầu buổi tập đầu tiên →",
+    "viewDetail": "Xem chi tiết →",
+    "aiOneLine": "Nhận xét AI",
+    "overallScore": "Điểm tổng",
+    "sections": {
+      "summary": "Kết quả tổng",
+      "feedback": "Phản hồi AI",
+      "timeline": "Phân tích theo đoạn",
+      "routine": "Lịch tập gợi ý",
+      "content": "Bạn có thể thích"
+    },
+    "routineCardTitle": "Lịch tập do AI đề xuất",
+    "routineCardSub": "Dựa trên báo cáo này",
+    "startRoutine": "Bắt đầu lịch tập",
+    "practiceAgain": "Tập lại",
+    "back": "Quay lại",
+    "estMin": "~{{min}} phút",
+    "score": "{{value}}",
+    "noTimeline": "Không có dữ liệu theo thời gian.",
+    "dayLabel": "Ngày {{day}}",
+    "scoreLabel": {
+      "posture": "Độ chính xác tư thế",
+      "rhythm": "Độ chính xác nhịp",
+      "completion": "Hoàn thiện động tác",
+      "expression": "Biểu cảm",
+      "pitch": "Độ chính xác cao độ",
+      "tempo": "Độ chính xác tempo",
+      "voice": "Phát âm",
+      "emotion": "Cảm xúc",
+      "pronunciation": "Phát âm",
+      "intonation": "Ngữ điệu",
+      "fluency": "Lưu loát",
+      "vocabulary": "Từ vựng"
+    }
+  },
+  "discoverNew": {
+    "categories": {
+      "all": "Tất cả",
+      "trending": "Thịnh hành",
+      "dance": "Vũ đạo phổ biến",
+      "songs": "Bài hát phổ biến",
+      "challenges": "Thử thách",
+      "korean": "Tiếng Hàn"
+    },
+    "sections": {
+      "trending": "Thịnh hành",
+      "popularDance": "Vũ đạo phổ biến",
+      "popularSongs": "Bài hát phổ biến",
+      "challenges": "Thử thách",
+      "korean": "Nội dung tiếng Hàn"
+    },
+    "actions": {
+      "practice": "Luyện",
+      "sing": "Hát",
+      "join": "Tham gia",
+      "open": "Mở"
+    },
+    "labels": {
+      "updatedWeekly": "Cập nhật hàng tuần",
+      "updatedAt": "Cập nhật {{date}}",
+      "participants": "{{count}} người tham gia",
+      "deadline": "Kết thúc {{date}}",
+      "bpm": "{{bpm}} BPM",
+      "level": "Lv {{level}}",
+      "duration": "{{duration}}",
+      "difficulty": {
+        "easy": "Dễ",
+        "normal": "Bình thường",
+        "hard": "Khó"
+      }
+    },
+    "empty": "Đang tải nội dung..."
+  },
   "views": {
+    "mypage": "TRANG CỦA TÔI",
     "aicoach": "AI COACH"
   },
+  "common": {
+    "more": "Thêm"
+  },
   "aicoach": {
-    "loading": "AI Coach đang tạo phản hồi...",
+    "loading": "AI coach đang soạn câu trả lời...",
     "placeholder": "Gửi tin nhắn..."
+  },
+  "mypage": {
+    "nickname": "ONNODE STAR",
+    "joinedAt": "Tham gia: 10.09.2025",
+    "levelText": "Lv.12 · Ngôi sao đang lên",
+    "today": "Hôm nay",
+    "sessions": "Buổi tập",
+    "totalTime": "Tổng thời gian",
+    "avgScore": "Điểm trung bình",
+    "streak": "Chuỗi",
+    "startPractice": "Bắt đầu luyện tập",
+    "growth": "Biểu đồ tiến bộ",
+    "feedbackHistory": "Lịch sử phản hồi AI",
+    "feedbackSummary": "Tempo ổn định, cần cải thiện độ duỗi tay.",
+    "savedVideos": "Video đã lưu",
+    "videoMenu": "Chia sẻ | Xóa",
+    "goalProgress": "Tiến độ mục tiêu",
+    "goalWeekly": "Luyện tập 5 lần trong tuần",
+    "goalVocal": "Thở luyện thanh 4 lần",
+    "goalKorean": "10 câu tiếng Hàn",
+    "addGoal": "Thêm mục tiêu"
+  },
+  "discover": {
+    "tabs": {
+      "all": "Tất cả",
+      "dance": "Nhảy",
+      "vocal": "Hát",
+      "korean": "Tiếng Hàn",
+      "challenge": "Thử thách"
+    },
+    "heroTitle": "Nổi bật cho bạn",
+    "practiceNow": "Luyện ngay",
+    "popularDance": "Vũ đạo nổi bật",
+    "startPractice": "Luyện",
+    "popularVocal": "Bài hát nổi bật",
+    "singNow": "Hát",
+    "koreanContent": "Học tiếng Hàn",
+    "challenges": "Thử thách",
+    "join": "Tham gia",
+    "trendingVideos": "Video thịnh hành",
+    "openPlayer": "Mở",
+    "rowItem": "Nội dung",
+    "listItem": "Bài học"
+  },
+  "community": {
+    "search": "Tìm cuộc trò chuyện...",
+    "tabs": {
+      "dm": "DM",
+      "group": "Nhóm"
+    },
+    "newChat": "Trò chuyện mới",
+    "newChatPlaceholder": "Tên hoặc tên nhóm",
+    "create": "Tạo",
+    "empty": "Chọn một cuộc trò chuyện",
+    "online": "Đang trực tuyến",
+    "offline": "Ngoại tuyến",
+    "uploading": "Đang tải lên...",
+    "messagePlaceholder": "Gửi tin nhắn...",
+    "attach": {
+      "image": "Chọn ảnh",
+      "video": "Chọn video",
+      "camera": "Mở camera"
+    }
+  },
+  "dance": {
+    "youtubePlaceholder": "Nhập URL YouTube",
+    "load": "Tải",
+    "emptyVideo": "Thêm URL video để bắt đầu",
+    "speed": "Tốc độ phát",
+    "mirror": "Chế độ gương",
+    "difficulty": "Độ khó AI",
+    "levels": {
+      "beginner": "Nhập môn",
+      "elementary": "Sơ cấp",
+      "intermediate": "Trung cấp",
+      "advanced": "Nâng cao",
+      "pro": "Chuyên nghiệp"
+    },
+    "cameraLive": "Camera trực tiếp",
+    "liveFeedback": "Phản hồi tư thế theo thời gian thực",
+    "summary": {
+      "total": "Điểm tổng",
+      "best": "Khoảnh khắc tốt nhất",
+      "needs": "Cần cải thiện"
+    },
+    "retry": "Thử lại",
+    "save": "Lưu",
+    "share": "Chia sẻ cộng đồng"
+  },
+  "vocal": {
+    "searchSong": "Tìm bài hoặc nghệ sĩ",
+    "tabs": {
+      "myUpload": "Bản của tôi",
+      "popular": "Phổ biến",
+      "discover": "Khám phá"
+    },
+    "record": "Ghi âm",
+    "stop": "Dừng",
+    "liveScore": "Điểm trực tiếp",
+    "line1": "Hôm nay tỏa sáng trên sân khấu",
+    "line2": "Nhịp điệu của chúng ta hòa làm một",
+    "line3": "Hít thở và bắt đầu lại",
+    "line4": "Hát chính xác đến phút cuối",
+    "result": "Kết quả ghi âm",
+    "pitch": "Cao độ",
+    "rhythm": "Nhịp",
+    "voice": "Giọng",
+    "emotion": "Cảm xúc",
+    "aiComment": "Kiểm soát hơi thở ổn định. Hãy nâng điểm cộng hưởng ở đoạn cao trào.",
+    "retry": "Thử lại",
+    "save": "Lưu",
+    "share": "Chia sẻ với bạn bè"
+  },
+  "korean": {
+    "modes": {
+      "pronunciation": "Phát âm",
+      "follow": "Nhại theo",
+      "correction": "AI sửa lỗi",
+      "lyricsVocab": "Từ vựng lời bài hát"
+    },
+    "sampleSentence": "Hôm nay hãy luyện tập với phát âm và nhịp rõ ràng.",
+    "toggleRomanized": "Bật/tắt phiên âm",
+    "toggleTranslation": "Bật/tắt bản dịch",
+    "record": "Ghi âm",
+    "syllableFeedback": "Phản hồi theo âm tiết sẽ hiển thị ở đây.",
+    "followTitle": "Chế độ nhại theo",
+    "lineLabel": "Câu {{idx}}",
+    "nativePlay": "Nghe bản gốc",
+    "correctionTitle": "AI sửa phát âm",
+    "correctionUser": "Hôm nay thời tiết rất joayo.",
+    "correctionAI": "Dùng 'jo-a-yo'. Phát âm nguyên âm giữa rõ hơn.",
+    "vocabTitle": "Học từ vựng qua lời bài hát"
+  },
+  "notifications": {
+    "filters": {
+      "all": "Tất cả",
+      "aicoach": "AI Coach",
+      "challenge": "Thử thách",
+      "community": "Cộng đồng"
+    },
+    "markAllRead": "Đánh dấu tất cả đã đọc",
+    "aiTitle": "🔥 Chào ONNODE STAR!",
+    "aiMessage": "Bạn chưa luyện thanh hôm nay. Tập 10 phút luôn nhé?",
+    "practiceNow": "Luyện ngay",
+    "goalTitle": "🎉 Đạt mục tiêu!",
+    "goalMessage": "Bạn đã hoàn thành 5 buổi tập tuần này!",
+    "nextGoal": "Đặt mục tiêu tiếp theo",
+    "recommendTitle": "🎵 Gợi ý mới",
+    "recommendMessage": "Nội dung này phù hợp với cấp độ hiện tại của bạn.",
+    "start": "Bắt đầu",
+    "changeSettings": "Đổi cài đặt thông báo →"
   }
 }
