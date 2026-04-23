@@ -7,9 +7,20 @@ import PoseFeedbackOverlay from '../components/dance/PoseFeedbackOverlay';
 import YouTubeImport from '../components/dance/YouTubeImport';
 import { usePoseDetection } from '../hooks/usePoseDetection';
 
+const DEFAULT_YOUTUBE_URL =
+  'https://www.youtube.com/watch?v=MPyvBYaCoLc&list=RDMPyvBYaCoLc&start_radio=1';
+const DEFAULT_EMBED_URL =
+  'https://www.youtube.com/embed/MPyvBYaCoLc?list=RDMPyvBYaCoLc';
+
+function buildIframeSrc(embedUrl) {
+  if (!embedUrl) return '';
+  const params = 'autoplay=1&playsinline=1&mute=1&rel=0';
+  return embedUrl.includes('?') ? `${embedUrl}&${params}` : `${embedUrl}?${params}`;
+}
+
 export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
   const { t } = useTranslation();
-  const [videoUrl, setVideoUrl] = useState('');
+  const [videoUrl, setVideoUrl] = useState(DEFAULT_EMBED_URL);
   const [rate, setRate] = useState(1.0);
   const [mirror, setMirror] = useState(false);
   const [difficulty, setDifficulty] = useState(3);
@@ -151,15 +162,16 @@ export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
     <div className="min-h-full p-4 md:p-6 bg-[#F5F5F7]">
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
         <div className="xl:col-span-3 rounded-xl border border-[#E5E5E5] bg-white p-4 space-y-3">
-          <YouTubeImport onLoad={setVideoUrl} />
+          <YouTubeImport onLoad={setVideoUrl} initialUrl={DEFAULT_YOUTUBE_URL} />
           <div className="rounded-xl overflow-hidden border border-[#E5E5E5] bg-black h-[260px] md:h-[360px]">
             {videoUrl ? (
               <iframe
                 title="dance-video"
-                src={`${videoUrl}?autoplay=1&playsinline=1`}
+                src={buildIframeSrc(videoUrl)}
                 className="w-full h-full"
                 style={{ transform: mirror ? 'scaleX(-1)' : 'none' }}
-                allow="autoplay; encrypted-media"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
               />
             ) : (
               <div className="h-full grid place-items-center text-white text-sm">{t('dance.emptyVideo')}</div>
