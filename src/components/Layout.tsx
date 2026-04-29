@@ -194,7 +194,7 @@ export default function Layout(props) {
 
       <div
         className="flex flex-1 min-h-0"
-        style={{ paddingTop: 48 }}
+        style={{ paddingTop: 'calc(48px + env(safe-area-inset-top, 0px))' }}
       >
         <LeftPanel
           activeTab={activeTab}

@@ -6,7 +6,13 @@ export default function TopNavBar({ onOpenNotifications, onOpenSettings }) {
   return (
     <header
       className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between bg-white"
-      style={{ height: 48, borderBottom: '1px solid #F0F0F0', padding: '0 16px' }}
+      style={{
+        height: 'calc(48px + env(safe-area-inset-top, 0px))',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
+        paddingLeft: 'calc(16px + env(safe-area-inset-left, 0px))',
+        paddingRight: 'calc(16px + env(safe-area-inset-right, 0px))',
+        borderBottom: '1px solid #F0F0F0',
+      }}
     >
       <div className="flex items-center gap-2 min-w-0">
         <div
