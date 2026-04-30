@@ -5,6 +5,8 @@ import JudgeReaction from './JudgeReaction';
 import JudgeConversation from './JudgeConversation';
 import LiveInteractionBar from './LiveInteractionBar';
 import useRealTimeJudge from '../../hooks/useRealTimeJudge';
+import BrightnessControl from '../camera/BrightnessControl';
+import { DEFAULT_FILTER } from '../../hooks/useCameraWithFilter';
 
 const ROUNDS = [
   { id: 'vocal', label: '🎤 보컬', desc: '자유곡 1절을 불러보세요', framing: 'portrait', phase: 'instruction_vocal' },
@@ -37,9 +39,14 @@ export default function AuditionStage({ agency, onComplete, onBack }) {
   const elapsedTimerRef = useRef(null);
   const reactionIdRef = useRef(0);
   const videoRef = useRef(null);
+  const displayCanvasRef = useRef(null);
+  const filterRafRef = useRef(0);
   const streamRef = useRef(null);
   const audioContextRef = useRef(null);
   const audioRafRef = useRef(null);
+  const [cameraFilter, setCameraFilter] = useState(DEFAULT_FILTER);
+  const cameraFilterRef = useRef(DEFAULT_FILTER);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
 
   const currentRound = ROUNDS[roundIdx];
   const ROUND_DURATION = 30;
@@ -117,6 +124,7 @@ export default function AuditionStage({ agency, onComplete, onBack }) {
           // analyser is best-effort
         }
         setCameraState('live');
+        startFilterRenderLoop();
       } catch (err) {
         if (cancelled) return;
         setCameraState('error');
@@ -127,6 +135,10 @@ export default function AuditionStage({ agency, onComplete, onBack }) {
     return () => {
       cancelled = true;
       if (audioRafRef.current) cancelAnimationFrame(audioRafRef.current);
+      if (filterRafRef.current) {
+        cancelAnimationFrame(filterRafRef.current);
+        filterRafRef.current = 0;
+      }
       if (audioContextRef.current && typeof audioContextRef.current.close === 'function') {
         try { audioContextRef.current.close(); } catch { /* noop */ }
       }
@@ -136,6 +148,45 @@ export default function AuditionStage({ agency, onComplete, onBack }) {
       }
     };
   }, []);
+
+  const buildFilterString = (f) => {
+    if (f.brightness === 1 && f.contrast === 1 && f.saturation === 1) return 'none';
+    return `brightness(${f.brightness}) contrast(${f.contrast}) saturate(${f.saturation})`;
+  };
+
+  const updateCameraFilter = (next) => {
+    cameraFilterRef.current = next;
+    setCameraFilter(next);
+  };
+
+  const resetCameraFilter = () => updateCameraFilter(DEFAULT_FILTER);
+
+  function startFilterRenderLoop() {
+    if (filterRafRef.current) cancelAnimationFrame(filterRafRef.current);
+    const loop = () => {
+      const v = videoRef.current;
+      const c = displayCanvasRef.current;
+      if (!v || !c) {
+        filterRafRef.current = requestAnimationFrame(loop);
+        return;
+      }
+      if (v.readyState < 2 || !v.videoWidth || !v.videoHeight) {
+        filterRafRef.current = requestAnimationFrame(loop);
+        return;
+      }
+      if (c.width !== v.videoWidth || c.height !== v.videoHeight) {
+        c.width = v.videoWidth;
+        c.height = v.videoHeight;
+      }
+      const ctx = c.getContext('2d');
+      if (ctx) {
+        ctx.filter = buildFilterString(cameraFilterRef.current);
+        ctx.drawImage(v, 0, 0, c.width, c.height);
+      }
+      filterRafRef.current = requestAnimationFrame(loop);
+    };
+    filterRafRef.current = requestAnimationFrame(loop);
+  }
 
   // ── Countdown gate: when camera goes live OR round changes, run 3-2-1 ─────
   useEffect(() => {
@@ -395,6 +446,7 @@ export default function AuditionStage({ agency, onComplete, onBack }) {
             boxShadow: `0 0 0 1px rgba(255,255,255,0.04), 0 30px 80px ${agency?.accentColor}22`,
           }}
         >
+          {/* 원본 video: 숨김 (필터 처리용 소스로만 사용) */}
           <video
             ref={videoRef}
             autoPlay
@@ -405,9 +457,22 @@ export default function AuditionStage({ agency, onComplete, onBack }) {
               inset: 0,
               width: '100%',
               height: '100%',
-              objectFit: currentRound.framing === 'wide' ? 'cover' : 'cover',
-              transform: 'scaleX(-1)', // mirror like a phone selfie
-              opacity: cameraState === 'live' ? 1 : 0.0,
+              objectFit: 'cover',
+              opacity: 0,
+              pointerEvents: 'none',
+            }}
+          />
+          {/* 필터 적용된 디스플레이 캔버스 */}
+          <canvas
+            ref={displayCanvasRef}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transform: 'scaleX(-1)',
+              opacity: cameraState === 'live' ? 1 : 0,
               transition: 'opacity 0.3s ease',
             }}
           />
@@ -479,6 +544,44 @@ export default function AuditionStage({ agency, onComplete, onBack }) {
           >
             {Math.max(0, ROUND_DURATION - elapsed)}s
           </div>
+
+          {/* 카메라 명암 조절 버튼 (타이머 아래) */}
+          {cameraState === 'live' ? (
+            <button
+              type="button"
+              onClick={() => setShowFilterPanel((v) => !v)}
+              aria-label="카메라 명암 조절"
+              style={{
+                position: 'absolute',
+                top: 56,
+                right: 12,
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: showFilterPanel ? (agency?.accentColor || '#FF1F8E') : 'rgba(0,0,0,0.55)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: '#fff',
+                fontSize: 16,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 25,
+              }}
+            >
+              ☀
+            </button>
+          ) : null}
+
+          {/* 카메라 명암 조절 패널 */}
+          {cameraState === 'live' ? (
+            <BrightnessControl
+              filter={cameraFilter}
+              onChange={updateCameraFilter}
+              onReset={resetCameraFilter}
+              visible={showFilterPanel}
+            />
+          ) : null}
 
           {/* Audio level meter (bottom-left) */}
           {cameraState === 'live' ? (

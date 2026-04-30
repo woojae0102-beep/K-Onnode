@@ -6,6 +6,8 @@ import MirrorModeToggle from '../components/dance/MirrorModeToggle';
 import PoseFeedbackOverlay from '../components/dance/PoseFeedbackOverlay';
 import YouTubeImport from '../components/dance/YouTubeImport';
 import { usePoseDetection } from '../hooks/usePoseDetection';
+import BrightnessControl from '../components/camera/BrightnessControl';
+import { DEFAULT_FILTER } from '../hooks/useCameraWithFilter';
 
 const DEFAULT_YOUTUBE_URL =
   'https://www.youtube.com/watch?v=MPyvBYaCoLc&list=RDMPyvBYaCoLc&start_radio=1';
@@ -30,7 +32,12 @@ export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
   const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef(null);
   const overlayCanvasRef = useRef(null);
+  const displayCanvasRef = useRef(null);
   const streamRef = useRef(null);
+  const filterRafRef = useRef(0);
+  const [cameraFilter, setCameraFilter] = useState(DEFAULT_FILTER);
+  const cameraFilterRef = useRef(DEFAULT_FILTER);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
   const isSecureOrigin = typeof window !== 'undefined' && (window.isSecureContext || ['localhost', '127.0.0.1'].includes(window.location.hostname));
   const { score, issue, summary, feedbackList, metrics, isAnalyzing } = usePoseDetection({
     active: cameraOn,
@@ -66,8 +73,51 @@ export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
       streamRef.current = null;
     }
     if (videoRef.current) videoRef.current.srcObject = null;
+    if (filterRafRef.current) {
+      cancelAnimationFrame(filterRafRef.current);
+      filterRafRef.current = 0;
+    }
     setVideoReady(false);
     setCameraOn(false);
+  };
+
+  const updateCameraFilter = (next) => {
+    cameraFilterRef.current = next;
+    setCameraFilter(next);
+  };
+
+  const resetCameraFilter = () => updateCameraFilter(DEFAULT_FILTER);
+
+  const buildFilterString = (f) => {
+    if (f.brightness === 1 && f.contrast === 1 && f.saturation === 1) return 'none';
+    return `brightness(${f.brightness}) contrast(${f.contrast}) saturate(${f.saturation})`;
+  };
+
+  const startFilterRenderLoop = () => {
+    if (filterRafRef.current) cancelAnimationFrame(filterRafRef.current);
+    const loop = () => {
+      const v = videoRef.current;
+      const c = displayCanvasRef.current;
+      if (!v || !c) {
+        filterRafRef.current = requestAnimationFrame(loop);
+        return;
+      }
+      if (v.readyState < 2 || !v.videoWidth || !v.videoHeight) {
+        filterRafRef.current = requestAnimationFrame(loop);
+        return;
+      }
+      if (c.width !== v.videoWidth || c.height !== v.videoHeight) {
+        c.width = v.videoWidth;
+        c.height = v.videoHeight;
+      }
+      const ctx = c.getContext('2d');
+      if (ctx) {
+        ctx.filter = buildFilterString(cameraFilterRef.current);
+        ctx.drawImage(v, 0, 0, c.width, c.height);
+      }
+      filterRafRef.current = requestAnimationFrame(loop);
+    };
+    filterRafRef.current = requestAnimationFrame(loop);
   };
 
   const attachStreamToVideo = async () => {
@@ -145,6 +195,7 @@ export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
     attachStreamToVideo().then((ok) => {
       if (ok) {
         setVideoReady(true);
+        startFilterRenderLoop();
       } else {
         setCameraError('카메라 영상 연결이 불안정합니다. 카메라를 껐다가 다시 켜주세요.');
         setVideoReady(false);
@@ -195,12 +246,20 @@ export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
 
         <div className="xl:col-span-2 space-y-3">
           <div className="rounded-xl border border-[#E5E5E5] bg-black h-56 md:h-64 relative overflow-hidden">
+            {/* 원본 video: MediaPipe 분석용으로 살아있어야 하므로 opacity 0으로 숨김 */}
             <video
               ref={videoRef}
               playsInline
               muted
               autoPlay
-              className={`h-full w-full object-cover scale-x-[-1] transition-opacity duration-150 ${cameraOn ? 'opacity-100' : 'opacity-0'}`}
+              className="absolute inset-0 h-full w-full object-cover opacity-0 pointer-events-none"
+            />
+            {/* 필터 적용된 디스플레이 캔버스 */}
+            <canvas
+              ref={displayCanvasRef}
+              className={`h-full w-full object-cover scale-x-[-1] transition-opacity duration-150 ${
+                cameraOn ? 'opacity-100' : 'opacity-0'
+              }`}
             />
             <canvas
               ref={overlayCanvasRef}
@@ -241,9 +300,28 @@ export default function DanceTrainingView({ onNavigate, onReportUpdate }) {
               )}
             </div>
             {cameraOn && (
-              <div className="absolute right-3 top-3 z-10 rounded-lg bg-black/55 px-2 py-1 text-[10px] text-white">
+              <div className="absolute left-3 top-3 z-10 rounded-lg bg-black/55 px-2 py-1 text-[10px] text-white">
                 포즈 {metrics.trackedPoints}/33 · 손 {metrics.handPoints}/42
               </div>
+            )}
+            {cameraOn && videoReady && (
+              <button
+                type="button"
+                onClick={() => setShowFilterPanel((v) => !v)}
+                aria-label="카메라 명암 조절"
+                className="absolute right-3 top-3 z-20 grid h-9 w-9 place-items-center rounded-full border border-white/30 text-white text-base shadow"
+                style={{ background: showFilterPanel ? '#FF1F8E' : 'rgba(0,0,0,0.55)' }}
+              >
+                ☀
+              </button>
+            )}
+            {cameraOn && (
+              <BrightnessControl
+                filter={cameraFilter}
+                onChange={updateCameraFilter}
+                onReset={resetCameraFilter}
+                visible={showFilterPanel}
+              />
             )}
           </div>
           {cameraError ? <p className="text-xs text-rose-500 px-1">{cameraError}</p> : null}
